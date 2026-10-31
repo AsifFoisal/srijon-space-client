@@ -86,7 +86,7 @@ export async function createStudio(
       avatar: user.avatar,
       memberSince: user.memberSince,
       verified: false,
-      bio: `${user.name.split(" ")[0]} is a new StudioSpace host, opening a space built for creative work.`,
+      bio: `${user.name.split(" ")[0]} is a new Srijon Space host, opening a space built for creative work.`,
     },
     ownerEmail: user.email,
     status: "Active",

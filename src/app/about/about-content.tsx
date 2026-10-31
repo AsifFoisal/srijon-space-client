@@ -59,14 +59,14 @@ export function AboutContent() {
     <div className="pb-20 pt-28 sm:pt-32">
       <section className="shell shell-wide">
         <div>
-          <p className="kicker">About StudioSpace</p>
+          <p className="kicker">About Srijon Space</p>
           <div className="mt-4 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
             <h1 className="text-balance font-display text-[clamp(2.9rem,6vw,5.8rem)] leading-[0.95] tracking-[-0.055em]">
               A Space for Every Creative Vision.
             </h1>
             <div>
               <p className="text-pretty text-[15px] leading-7 text-stone">
-                StudioSpace connects creators with professional creative
+                Srijon Space connects creators with professional creative
                 environments across New York — from daylight photo lofts and
                 broadcast stages to podcast rooms, music suites, and art
                 workshops.
@@ -134,7 +134,7 @@ export function AboutContent() {
           <div>
             <div className="space-y-5 text-[15px] leading-8 text-stone">
               <p>
-                StudioSpace started with a simple frustration: finding a
+                Srijon Space started with a simple frustration: finding a
                 professional space shouldn&apos;t mean a week of emails,
                 favours, and guesswork. Creators needed a clear, trusted way to
                 see what was available, what it cost, and what a space actually
@@ -182,7 +182,7 @@ export function AboutContent() {
             <SectionHeading
               kicker="Who we serve"
               title="Built for every kind of maker."
-              description="Different crafts need different rooms. StudioSpace is designed to help each one find the right fit."
+              description="Different crafts need different rooms. Srijon Space is designed to help each one find the right fit."
             />
           </div>
           <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -206,7 +206,7 @@ export function AboutContent() {
       <section className="border-y border-line bg-paper py-20">
         <div className="shell shell-wide grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="kicker">Why StudioSpace</p>
+            <p className="kicker">Why Srijon Space</p>
             <h2 className="mt-3 max-w-sm text-balance font-display text-3xl leading-[1.08] tracking-[-0.04em] sm:text-4xl">
               Fewer hurdles between you and the work.
             </h2>

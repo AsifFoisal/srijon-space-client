@@ -439,15 +439,15 @@ export function StudioForm({
         <div className="flex flex-col gap-5 rounded-xl border border-line bg-ivory p-5 sm:flex-row sm:items-center">
           <Avatar
             src={user?.avatar}
-            name={user?.name ?? "StudioSpace host"}
+            name={user?.name ?? "Srijon Space host"}
             size={56}
           />
           <div className="flex-1">
             <p className="font-medium text-ink">
-              {user?.name ?? "StudioSpace host"}
+              {user?.name ?? "Srijon Space host"}
             </p>
             <p className="mt-0.5 text-sm text-stone">
-              {user?.email ?? "host@studiospace.com"}
+              {user?.email ?? "host@srijonspace.com"}
             </p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-paper px-3 py-1.5 text-[11px] text-stone">

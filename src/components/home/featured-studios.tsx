@@ -23,7 +23,7 @@ export function FeaturedStudios() {
         <SectionHeading
           kicker="Featured spaces"
           title="Spaces Worth Creating In"
-          description="Explore some of the most inspiring creative spaces available on StudioSpace."
+          description="Explore some of the most inspiring creative spaces available on Srijon Space."
           action={
             <Link
               href="/studios"

@@ -59,7 +59,7 @@ export function HostCta() {
             <div>
               <div className="rounded-2xl border border-white/15 bg-white/[0.07] p-6 backdrop-blur-md sm:p-8">
                 <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-on-dark/50">
-                  Why hosts choose StudioSpace
+                  Why hosts choose Srijon Space
                 </p>
                 <ul className="mt-5 space-y-4">
                   {hostPoints.map((point) => (

@@ -5,7 +5,7 @@ import { SUPPORT_EMAIL } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Help, Terms & Privacy",
   description:
-    "StudioSpace help centre, terms and conditions, and privacy information for this demo marketplace.",
+    "Srijon Space help centre, terms and conditions, and privacy information for this demo marketplace.",
 };
 
 const faqs = [
@@ -45,7 +45,7 @@ export default function PoliciesPage() {
           Help, Terms &amp; Privacy.
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-stone">
-          Everything you need to know about how StudioSpace works. This is a
+          Everything you need to know about how Srijon Space works. This is a
           frontend demonstration project, so bookings, accounts, and payments
           are simulated and stored locally in your browser.
         </p>
@@ -120,7 +120,7 @@ export default function PoliciesPage() {
               </h2>
               <div className="mt-4 space-y-4 text-sm leading-7 text-stone">
                 <p>
-                  StudioSpace is a demonstration marketplace. All listings,
+                  Srijon Space is a demonstration marketplace. All listings,
                   hosts, bookings, reviews, and payments shown in this project
                   are fictional unless explicitly stated. Nothing on this site
                   constitutes a real rental agreement.
@@ -165,7 +165,7 @@ export default function PoliciesPage() {
                 </p>
                 <p>
                   We do not collect analytics, payment details, or precise
-                  location data in this project. If StudioSpace were deployed
+                  location data in this project. If Srijon Space were deployed
                   as a production service, a full privacy notice covering data
                   processing, retention, and your rights would apply.
                 </p>
@@ -192,7 +192,7 @@ export default function PoliciesPage() {
                   href="/about"
                   className="inline-flex h-11 items-center rounded-full border border-line px-5 text-sm font-medium text-ink transition-colors hover:border-ink/30"
                 >
-                  About StudioSpace
+                  About Srijon Space
                 </Link>
               </div>
             </section>

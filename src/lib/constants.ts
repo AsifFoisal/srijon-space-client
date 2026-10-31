@@ -75,7 +75,7 @@ export const MIN_PRICE = 0;
 export const MAX_PRICE = 300;
 export const STUDIOS_PER_PAGE = 6;
 
-export const DEMO_EMAIL = "maya@studiospace.com";
+export const DEMO_EMAIL = "maya@srijonspace.com";
 export const DEMO_PASSWORD = "Studio123";
 
 export const DEMO_USER: AuthUser = {
@@ -119,4 +119,4 @@ export const ABOUT_VALUES = [
   "Studio owners",
 ];
 
-export const SUPPORT_EMAIL = "hello@studiospace.com";
+export const SUPPORT_EMAIL = "hello@srijonspace.com";

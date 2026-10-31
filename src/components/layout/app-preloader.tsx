@@ -75,7 +75,7 @@ export function AppPreloader() {
 
   return (
     <Loader
-      text="StudioSpace"
+      text="Srijon Space"
       accentText="Space"
       accentColor="#e8491d"
       ghostColor="rgba(247, 243, 235, 0.35)"

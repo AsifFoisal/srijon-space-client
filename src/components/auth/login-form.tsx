@@ -238,7 +238,7 @@ export function LoginForm() {
       </div>
 
       <p className="mt-8 text-center text-sm text-stone">
-        New to StudioSpace?{" "}
+        New to Srijon Space?{" "}
         <Link
           href="/register"
           className={cn("font-medium text-ink underline-offset-4 hover:underline")}

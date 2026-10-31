@@ -5,7 +5,7 @@ import { Skeleton, StudioGridSkeleton } from "@/components/ui/skeleton";
 export const metadata = {
   title: "Explore Studios",
   description:
-    "Browse photo studios, film stages, podcast rooms, music suites, and art workshops available on StudioSpace.",
+    "Browse photo studios, film stages, podcast rooms, music suites, and art workshops available on Srijon Space.",
 };
 
 function ExploreFallback() {

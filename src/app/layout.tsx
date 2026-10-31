@@ -25,12 +25,12 @@ const playwrite = Playwrite_IT_Trad({
 
 export const metadata: Metadata = {
   title: {
-    default: "StudioSpace — Creative studios, ready to book",
-    template: "%s — StudioSpace",
+    default: "Srijon Space — Creative studios, ready to book",
+    template: "%s — Srijon Space",
   },
   description:
-    "Discover and book inspiring photo studios, film stages, podcast rooms, music suites, and art workshops. StudioSpace connects creators with premium creative spaces.",
-  applicationName: "StudioSpace",
+    "Discover and book inspiring photo studios, film stages, podcast rooms, music suites, and art workshops. Srijon Space connects creators with premium creative spaces.",
+  applicationName: "Srijon Space",
   keywords: [
     "studio rental",
     "photo studio",
@@ -39,10 +39,10 @@ export const metadata: Metadata = {
     "music studio",
     "art workshop",
     "creative spaces",
-    "StudioSpace",
+    "Srijon Space",
   ],
   openGraph: {
-    title: "StudioSpace — Creative studios, ready to book",
+    title: "Srijon Space — Creative studios, ready to book",
     description:
       "A peer-to-peer marketplace for creative studio rentals. Discover inspiring spaces and book them by the hour.",
     type: "website",

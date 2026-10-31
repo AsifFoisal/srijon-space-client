@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -20,6 +20,11 @@ import type { RegisterInput } from "@/lib/types";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { cn, isValidUrl } from "@/lib/utils";
 
 interface RegisterValues {
@@ -57,6 +62,8 @@ export function RegisterForm() {
   const { register: registerAccount, loginWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [requirementsOpen, setRequirementsOpen] = useState(false);
+  const passwordFieldRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -77,6 +84,23 @@ export function RegisterForm() {
     { label: "One uppercase letter", met: /[A-Z]/.test(password) },
     { label: "One lowercase letter", met: /[a-z]/.test(password) },
   ];
+  const requirementsMet = requirements.filter(
+    (requirement) => requirement.met,
+  ).length;
+
+  const passwordRegistration = register("password", {
+    required: "Choose a password.",
+    minLength: {
+      value: 6,
+      message: "Use at least 6 characters.",
+    },
+    validate: {
+      uppercase: (value) =>
+        /[A-Z]/.test(value) || "Include at least one uppercase letter.",
+      lowercase: (value) =>
+        /[a-z]/.test(value) || "Include at least one lowercase letter.",
+    },
+  });
 
   async function onSubmit(values: RegisterValues) {
     try {
@@ -113,8 +137,8 @@ export function RegisterForm() {
 
   return (
     <div>
-      <p className="kicker">Join StudioSpace</p>
-      <h1 className="mt-3 font-display text-4xl leading-[1.02] tracking-[-0.04em] sm:text-5xl">
+      <p className="kicker">Join Srijon Space</p>
+      <h1 className="mt-3 font-display text-4xl leading-[1.02] tracking-[-0.04em] sm:text-3xl">
         Join the Creative Community.
       </h1>
       <p className="mt-3 text-sm leading-6 text-stone">
@@ -178,13 +202,9 @@ export function RegisterForm() {
 
         <div>
           <div className="flex items-end gap-3">
-            <Avatar
-              src={avatar || undefined}
-              name={name || "New creator"}
-              size={44}
-            />
             <Input
               label="Profile photo URL"
+              containerClassName="min-w-0 flex-1"
               placeholder="https://…"
               hint="Optional — we'll use a default avatar if left blank."
               error={errors.avatar?.message}
@@ -198,62 +218,84 @@ export function RegisterForm() {
           </div>
         </div>
 
-        <Input
-          label="Password"
-          type={showPassword ? "text" : "password"}
-          autoComplete="new-password"
-          placeholder="Create a password"
-          icon={<Lock className="size-4" />}
-          error={errors.password?.message}
-          endAdornment={
-            <button
-              type="button"
-              onClick={() => setShowPassword((current) => !current)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="flex size-9 items-center justify-center rounded-full text-stone transition-colors hover:bg-sand hover:text-ink"
-            >
-              {showPassword ? (
-                <EyeOff className="size-4" aria-hidden="true" />
-              ) : (
-                <Eye className="size-4" aria-hidden="true" />
-              )}
-            </button>
-          }
-          {...register("password", {
-            required: "Choose a password.",
-            minLength: {
-              value: 6,
-              message: "Use at least 6 characters.",
-            },
-            validate: {
-              uppercase: (value) =>
-                /[A-Z]/.test(value) ||
-                "Include at least one uppercase letter.",
-              lowercase: (value) =>
-                /[a-z]/.test(value) ||
-                "Include at least one lowercase letter.",
-            },
-          })}
-        />
+        <Popover open={requirementsOpen} onOpenChange={setRequirementsOpen}>
+          <PopoverAnchor asChild>
+            <div ref={passwordFieldRef}>
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="Create a password"
+                icon={<Lock className="size-4" />}
+                error={errors.password?.message}
+                endAdornment={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="flex size-9 items-center justify-center rounded-full text-stone transition-colors hover:bg-sand hover:text-ink"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-4" aria-hidden="true" />
+                    ) : (
+                      <Eye className="size-4" aria-hidden="true" />
+                    )}
+                  </button>
+                }
+                {...passwordRegistration}
+                onFocus={() => setRequirementsOpen(true)}
+                onBlur={(event) => {
+                  passwordRegistration.onBlur(event);
+                  window.setTimeout(() => {
+                    if (
+                      !passwordFieldRef.current?.contains(document.activeElement)
+                    ) {
+                      setRequirementsOpen(false);
+                    }
+                  }, 0);
+                }}
+              />
+            </div>
+          </PopoverAnchor>
 
-        <ul className="grid gap-1.5 rounded-xl bg-paper p-3.5 text-xs sm:grid-cols-3 sm:gap-2">
-          {requirements.map((requirement) => (
-            <li
-              key={requirement.label}
-              className={cn(
-                "flex items-center gap-1.5 transition-colors",
-                requirement.met ? "text-accent-deep" : "text-stone",
-              )}
-            >
-              {requirement.met ? (
-                <CheckCircle2 className="size-3.5" aria-hidden="true" />
-              ) : (
-                <Circle className="size-3.5" aria-hidden="true" />
-              )}
-              {requirement.label}
-            </li>
-          ))}
-        </ul>
+          <PopoverContent
+            side="top"
+            align="start"
+            sideOffset={8}
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            className="w-[min(28rem,calc(100vw-2.5rem))]"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-stone">
+                Password needs
+              </p>
+              <span className="text-[10px] tabular-nums text-stone">
+                {requirementsMet}/3
+              </span>
+            </div>
+            <ul aria-live="polite" className="mt-3 space-y-2">
+              {requirements.map((requirement) => (
+                <li
+                  key={requirement.label}
+                  className={cn(
+                    "flex items-center gap-2 text-xs transition-colors",
+                    requirement.met ? "text-ink" : "text-stone",
+                  )}
+                >
+                  {requirement.met ? (
+                    <CheckCircle2
+                      className="size-3.5 shrink-0 text-accent"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <Circle className="size-3.5 shrink-0" aria-hidden="true" />
+                  )}
+                  {requirement.label}
+                </li>
+              ))}
+            </ul>
+          </PopoverContent>
+        </Popover>
 
         {errors.root?.message ? (
           <p

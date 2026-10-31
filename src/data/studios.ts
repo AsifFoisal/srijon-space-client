@@ -2,7 +2,7 @@ import type { Host, Studio } from "@/lib/types";
 
 const maya: Host = {
   name: "Maya Chen",
-  email: "maya@studiospace.com",
+  email: "maya@srijonspace.com",
   avatar: "/images/avatars/maya.jpg",
   memberSince: "March 2023",
   verified: true,
@@ -11,7 +11,7 @@ const maya: Host = {
 
 const daniel: Host = {
   name: "Daniel Reyes",
-  email: "daniel@studiospace.com",
+  email: "daniel@srijonspace.com",
   avatar: "/images/avatars/host-2.jpg",
   memberSince: "January 2022",
   verified: true,
@@ -20,7 +20,7 @@ const daniel: Host = {
 
 const lena: Host = {
   name: "Lena Ortiz",
-  email: "lena@studiospace.com",
+  email: "lena@srijonspace.com",
   avatar: "/images/avatars/host-3.jpg",
   memberSince: "August 2021",
   verified: true,

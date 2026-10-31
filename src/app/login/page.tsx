@@ -5,7 +5,7 @@ import { LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Sign in to StudioSpace to book creative spaces and manage your listings.",
+  description: "Sign in to Srijon Space to book creative spaces and manage your listings.",
 };
 
 export default function LoginPage() {

@@ -1,4 +1,4 @@
-const PREFIX = "studiospace:v1:";
+const PREFIX = "srijonspace:v1:";
 
 export const STORAGE_KEYS = {
   auth: `${PREFIX}auth`,

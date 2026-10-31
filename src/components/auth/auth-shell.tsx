@@ -36,7 +36,7 @@ export function AuthShell({
           </div>
 
           <p className="text-center text-[11px] text-stone">
-            © 2026 StudioSpace. All rights reserved.
+            © 2026 Srijon Space. All rights reserved.
           </p>
         </div>
 

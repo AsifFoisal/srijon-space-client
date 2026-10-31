@@ -4,7 +4,7 @@ import { AboutContent } from "./about-content";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "StudioSpace connects creators with professional creative spaces across New York — photo studios, film stages, podcast rooms, music suites, and art workshops.",
+    "Srijon Space connects creators with professional creative spaces across New York — photo studios, film stages, podcast rooms, music suites, and art workshops.",
 };
 
 export default function AboutPage() {

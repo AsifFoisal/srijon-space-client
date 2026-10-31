@@ -17,7 +17,7 @@ export function Logo({
     <Link
       href={href}
       onClick={onNavigate}
-      aria-label="StudioSpace home"
+      aria-label="Srijon Space home"
       className={cn("group inline-flex items-center gap-2.5", className)}
     >
       <span
@@ -41,7 +41,7 @@ export function Logo({
         )}
         style={{ fontFamily: "var(--font-playwrite)" }}
       >
-        Studio<span className="text-accent">Space</span>
+        Srijon{" "}<span className="text-accent">Space</span>
       </span>
     </Link>
   );

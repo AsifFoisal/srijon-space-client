@@ -428,7 +428,7 @@ export function StudioDetailClient({ id }: { id: string }) {
                     ))}
                     <p className="text-[11px] text-stone">
                       Showing {reviews.length} recent review
-                      {reviews.length === 1 ? "" : "s"} from the StudioSpace
+                      {reviews.length === 1 ? "" : "s"} from the Srijon Space
                       community.
                     </p>
                   </div>

@@ -4,7 +4,7 @@ import { EditStudioClient } from "./edit-studio-client";
 
 export const metadata: Metadata = {
   title: "Edit Studio",
-  description: "Update your StudioSpace listing.",
+  description: "Update your Srijon Space listing.",
 };
 
 export async function generateStaticParams() {
