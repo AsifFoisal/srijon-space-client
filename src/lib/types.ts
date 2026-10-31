@@ -147,10 +147,3 @@ export type SortOption =
   | "Price: Low to High"
   | "Price: High to Low"
   | "Highest Rated";
-
-export interface RegisterInput {
-  name: string;
-  email: string;
-  password: string;
-  avatar: string;
-}

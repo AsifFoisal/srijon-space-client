@@ -1,8 +1,6 @@
 const PREFIX = "srijonspace:v1:";
 
 export const STORAGE_KEYS = {
-  auth: `${PREFIX}auth`,
-  users: `${PREFIX}users`,
   studios: `${PREFIX}studios`,
   bookings: `${PREFIX}bookings`,
   favorites: `${PREFIX}favorites`,

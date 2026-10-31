@@ -15,9 +15,7 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/context/auth-context";
-import type { RegisterInput } from "@/lib/types";
-import { Avatar } from "@/components/ui/avatar";
+import { signIn, signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +23,7 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
-import { cn, isValidUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface RegisterValues {
   name: string;
@@ -59,28 +57,21 @@ function GoogleIcon() {
 
 export function RegisterForm() {
   const router = useRouter();
-  const { register: registerAccount, loginWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [requirementsOpen, setRequirementsOpen] = useState(false);
   const passwordFieldRef = useRef<HTMLDivElement>(null);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({
+  const { register, watch } = useForm<RegisterValues>({
     defaultValues: { name: "", email: "", avatar: "", password: "" },
   });
 
   const password = watch("password") ?? "";
-  const name = watch("name") ?? "";
   const avatar = watch("avatar") ?? "";
 
   const requirements = [
-    { label: "At least 6 characters", met: password.length >= 6 },
+    { label: "At least 8 characters", met: password.length >= 8 },
     { label: "One uppercase letter", met: /[A-Z]/.test(password) },
     { label: "One lowercase letter", met: /[a-z]/.test(password) },
   ];
@@ -88,52 +79,58 @@ export function RegisterForm() {
     (requirement) => requirement.met,
   ).length;
 
-  const passwordRegistration = register("password", {
-    required: "Choose a password.",
-    minLength: {
-      value: 6,
-      message: "Use at least 6 characters.",
-    },
-    validate: {
-      uppercase: (value) =>
-        /[A-Z]/.test(value) || "Include at least one uppercase letter.",
-      lowercase: (value) =>
-        /[a-z]/.test(value) || "Include at least one lowercase letter.",
-    },
-  });
+  const passwordRegistration = register("password");
 
-  async function onSubmit(values: RegisterValues) {
-    try {
-      await registerAccount({
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        avatar: values.avatar,
-      } satisfies RegisterInput);
-      toast.success("Account created. Sign in to continue.");
-      router.push(`/login?email=${encodeURIComponent(values.email)}`);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "We couldn't create your account. Please try again.";
-      setError("root", { message });
-      toast.error(message);
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    formData.forEach((value, key) => {
+      data[key] = value.toString();
+    });
+
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match!");
+      setSubmitting(false);
+      return;
     }
-  }
 
-  async function handleGoogle() {
+    const loadingToast = toast.loading("Creating account...");
+
+    const { error } = await signUp.email({
+      name: data.name as string,
+      email: data.email as string,
+      password: data.password as string,
+      image: avatar.trim() || undefined,
+      callbackURL: "/login",
+    });
+
+    toast.dismiss(loadingToast);
+
+    if (error) {
+      toast.error(error.message || "Sign up failed");
+      setSubmitting(false);
+      return;
+    }
+
+    toast.success("Account created successfully!");
+    router.push("/login");
+  };
+
+  const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const user = await loginWithGoogle();
-      toast.success(`Signed in as ${user.name}.`);
-      router.push("/dashboard");
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
     } catch {
-      toast.error("Google sign-up is unavailable right now. Try the email form.");
-    } finally {
+      toast.error("Google sign-in failed");
       setGoogleLoading(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -148,7 +145,7 @@ export function RegisterForm() {
 
       <button
         type="button"
-        onClick={handleGoogle}
+        onClick={handleGoogleSignIn}
         disabled={googleLoading}
         className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-line bg-paper text-sm font-medium text-ink transition-colors hover:border-ink/30 disabled:opacity-60"
       >
@@ -168,20 +165,13 @@ export function RegisterForm() {
         <span className="h-px flex-1 bg-line" aria-hidden="true" />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+      <form onSubmit={onSubmit} noValidate className="space-y-4">
         <Input
           label="Full name"
           autoComplete="name"
           placeholder="Your name"
           icon={<User className="size-4" />}
-          error={errors.name?.message}
-          {...register("name", {
-            required: "Tell us your name.",
-            minLength: {
-              value: 2,
-              message: "Your name should be at least 2 characters.",
-            },
-          })}
+          {...register("name")}
         />
 
         <Input
@@ -190,33 +180,15 @@ export function RegisterForm() {
           autoComplete="email"
           placeholder="you@studio.com"
           icon={<Mail className="size-4" />}
-          error={errors.email?.message}
-          {...register("email", {
-            required: "Enter your email address.",
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Enter a valid email address.",
-            },
-          })}
+          {...register("email")}
         />
 
-        <div>
-          <div className="flex items-end gap-3">
-            <Input
-              label="Profile photo URL"
-              containerClassName="min-w-0 flex-1"
-              placeholder="https://…"
-              hint="Optional — we'll use a default avatar if left blank."
-              error={errors.avatar?.message}
-              {...register("avatar", {
-                validate: (value) =>
-                  !value ||
-                  isValidUrl(value) ||
-                  "Enter a valid image URL starting with http.",
-              })}
-            />
-          </div>
-        </div>
+        <Input
+          label="Profile photo URL"
+          placeholder="https://…"
+          hint="Optional — we'll use a default avatar if left blank."
+          {...register("avatar")}
+        />
 
         <Popover open={requirementsOpen} onOpenChange={setRequirementsOpen}>
           <PopoverAnchor asChild>
@@ -227,7 +199,6 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 placeholder="Create a password"
                 icon={<Lock className="size-4" />}
-                error={errors.password?.message}
                 endAdornment={
                   <button
                     type="button"
@@ -297,20 +268,20 @@ export function RegisterForm() {
           </PopoverContent>
         </Popover>
 
-        {errors.root?.message ? (
-          <p
-            role="alert"
-            className="rounded-lg border border-accent/30 bg-accent-soft px-3 py-2.5 text-xs leading-5 text-accent-deep"
-          >
-            {errors.root.message}
-          </p>
-        ) : null}
+        <Input
+          label="Confirm password"
+          name="confirmPassword"
+          type={showPassword ? "text" : "password"}
+          autoComplete="new-password"
+          placeholder="Repeat your password"
+          icon={<Lock className="size-4" />}
+        />
 
         <Button
           type="submit"
           size="lg"
           className="w-full"
-          loading={isSubmitting}
+          loading={submitting}
           loadingText="Creating account…"
         >
           Create Account

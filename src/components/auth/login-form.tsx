@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/auth-context";
-import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -57,7 +56,6 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    setValue,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
@@ -82,20 +80,11 @@ export function LoginForm() {
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
-      const user = await loginWithGoogle();
-      toast.success(`Signed in as ${user.name}.`);
-      router.push(nextPath);
+      await loginWithGoogle(nextPath);
     } catch {
-      toast.error("Google sign-in is unavailable right now. Try the demo account.");
-    } finally {
+      toast.error("Google sign-in is unavailable right now. Try signing in with email.");
       setGoogleLoading(false);
     }
-  }
-
-  function fillDemoCredentials() {
-    setValue("email", DEMO_EMAIL, { shouldValidate: true });
-    setValue("password", DEMO_PASSWORD, { shouldValidate: true });
-    toast.info("Demo credentials filled in.");
   }
 
   return (
@@ -179,7 +168,7 @@ export function LoginForm() {
             type="button"
             onClick={() =>
               toast.info(
-                "Password recovery isn't connected in this demo. Use the demo account below.",
+                "Password recovery isn't set up yet.",
               )
             }
             className="text-xs font-medium text-accent-deep transition-colors hover:text-accent"
@@ -207,35 +196,6 @@ export function LoginForm() {
           Log In
         </Button>
       </form>
-
-      <div className="mt-6 rounded-xl border border-line bg-paper p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-stone">
-            Demo account
-          </p>
-          <button
-            type="button"
-            onClick={fillDemoCredentials}
-            className="text-[11px] font-medium text-accent-deep hover:text-accent"
-          >
-            Use demo details
-          </button>
-        </div>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone">
-          <span>
-            Email:{" "}
-            <code className="rounded bg-sand px-1.5 py-0.5 text-ink">
-              {DEMO_EMAIL}
-            </code>
-          </span>
-          <span>
-            Password:{" "}
-            <code className="rounded bg-sand px-1.5 py-0.5 text-ink">
-              {DEMO_PASSWORD}
-            </code>
-          </span>
-        </div>
-      </div>
 
       <p className="mt-8 text-center text-sm text-stone">
         New to Srijon Space?{" "}

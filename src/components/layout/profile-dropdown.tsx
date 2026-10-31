@@ -37,9 +37,13 @@ export function ProfileDropdown({ light = false }: { light?: boolean }) {
   if (!user) return null;
 
   async function handleLogout() {
-    await logout();
-    toast.success("You're signed out. See you soon.");
-    router.push("/");
+    try {
+      await logout();
+      toast.success("You're signed out. See you soon.");
+      router.push("/");
+    } catch {
+      toast.error("We couldn't sign you out. Please try again.");
+    }
   }
 
   return (
