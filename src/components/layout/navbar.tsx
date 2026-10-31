@@ -169,10 +169,10 @@ export function Navbar() {
                   href="/register"
                   className={buttonStyles({
                     size: "sm",
-                    variant: onDark ? "dark" : "primary",
+                    variant: "primary",
                   })}
                 >
-                  Get started
+                  Sign up
                   <ArrowUpRight className="size-3.5" aria-hidden="true" />
                 </Link>
               </div>
@@ -314,9 +314,9 @@ export function Navbar() {
                     <Link
                       href="/register"
                       onClick={() => setMobileOpen(false)}
-                      className={buttonStyles({ className: "w-full" })}
+                          className={buttonStyles({ className: "w-full"})}
                     >
-                      Create an account
+                      Sign up
                     </Link>
                   </div>
                 )}

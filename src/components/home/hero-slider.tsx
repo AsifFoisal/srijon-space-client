@@ -174,7 +174,7 @@ export function HeroSlider() {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
         <div className="shell shell-wide">
-          <div className="pointer-events-auto flex flex-col gap-5 border-t border-white/15 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="pointer-events-auto flex flex-col gap-5 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-5">
               <p className="font-display text-sm tracking-[0.12em] text-on-dark/70">
                 <span className="text-white">
