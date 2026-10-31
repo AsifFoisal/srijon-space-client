@@ -1,26 +1,217 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ivory: #f7f3eb;
+  --paper: #fffcf6;
+  --sand: #ece4d5;
+  --stone: #6f6a60;
+  --ink: #171512;
+  --line: #ddd3c3;
+  --accent: #e8491d;
+  --accent-deep: #c53a12;
+  --accent-soft: #f9e1d5;
+  --dark: #121110;
+  --dark-soft: #1b1916;
+
+  /* Standard shadcn tokens, mapped to the StudioSpace palette. */
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--sand);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sand);
+  --muted-foreground: var(--stone);
+  --accent-foreground: #ffffff;
+  --destructive: var(--accent);
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
+  --radius: 0.75rem;
 }
 
 @theme inline {
+  --color-ivory: var(--ivory);
+  --color-paper: var(--paper);
+  --color-sand: var(--sand);
+  --color-stone: var(--stone);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-dark: var(--dark);
+  --color-dark-soft: var(--dark-soft);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-grotesk);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--ivory);
+    color: var(--ink);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  input[type="date"],
+  input[type="time"],
+  select {
+    color-scheme: light;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .shell {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 1280px;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .shell-wide {
+    max-width: 1440px;
+  }
+
+  .kicker {
+    font-size: 0.6875rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--stone);
+  }
+
+  .kicker-light {
+    color: rgba(247, 243, 235, 0.62);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .skeleton {
+    background: color-mix(in srgb, var(--sand) 72%, white);
+  }
+
+  .hide-scrollbar,
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .grain {
+    position: relative;
+  }
+
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  }
+
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(23, 21, 18, 0.24);
+    color: transparent;
+  }
+
+  .text-outline-light {
+    -webkit-text-stroke: 1px rgba(247, 243, 235, 0.36);
+    color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Sonner */
+[data-sonner-toast] {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-sonner-toaster] {
+  --normal-bg: var(--paper);
+  --normal-border: var(--line);
+  --normal-text: var(--ink);
+  --success-bg: var(--paper);
+  --success-border: var(--line);
+  --success-text: var(--ink);
+  --error-bg: var(--paper);
+  --error-border: var(--accent-soft);
+  --error-text: var(--accent-deep);
 }

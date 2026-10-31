@@ -1,0 +1,110 @@
+import { clsx, type ClassValue } from "clsx";
+import { format, parseISO } from "date-fns";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+export function formatCurrency(value: number) {
+  return usd.format(value);
+}
+
+export function parseDate(value: string) {
+  return parseISO(value);
+}
+
+export function formatDateLabel(value: string, pattern = "EEE, MMM d, yyyy") {
+  return format(parseISO(value), pattern);
+}
+
+export function timeToMinutes(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+  return (hours || 0) * 60 + (minutes || 0);
+}
+
+export function minutesToTime(minutes: number) {
+  const h = Math.floor(minutes / 60) % 24;
+  const m = minutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+export function durationInHours(startTime: string, endTime: string) {
+  const diff = timeToMinutes(endTime) - timeToMinutes(startTime);
+  if (diff <= 0) return 0;
+  return Math.round((diff / 60) * 100) / 100;
+}
+
+export function formatTimeLabel(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const hour = hours % 12 || 12;
+  return `${hour}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
+export function formatDuration(hours: number) {
+  if (hours <= 0) return "0 hrs";
+  if (hours === 1) return "1 hr";
+  return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} hrs`;
+}
+
+export function todayISO() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60_000;
+  return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+}
+
+export function isValidUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+export function generateId(prefix = "SS") {
+  return `${prefix}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
+export function pluralize(count: number, singular: string, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+export function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
+
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export const WEEKDAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+export function weekdayName(day: number) {
+  return WEEKDAY_NAMES[day] ?? "";
+}
+
