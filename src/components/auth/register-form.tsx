@@ -32,6 +32,19 @@ interface RegisterValues {
   password: string;
 }
 
+function validatePassword(password: string) {
+  if (password.length < 6) {
+    return "Password must be at least 6 characters.";
+  }
+  if (!/[A-Z]/.test(password)) {
+    return "Password must include an uppercase letter.";
+  }
+  if (!/[a-z]/.test(password)) {
+    return "Password must include a lowercase letter.";
+  }
+  return "";
+}
+
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
@@ -60,6 +73,7 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const [requirementsOpen, setRequirementsOpen] = useState(false);
   const passwordFieldRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +85,7 @@ export function RegisterForm() {
   const avatar = watch("avatar") ?? "";
 
   const requirements = [
-    { label: "At least 8 characters", met: password.length >= 8 },
+    { label: "At least 6 characters", met: password.length >= 6 },
     { label: "One uppercase letter", met: /[A-Z]/.test(password) },
     { label: "One lowercase letter", met: /[a-z]/.test(password) },
   ];
@@ -91,6 +105,17 @@ export function RegisterForm() {
       data[key] = value.toString();
     });
 
+    const passwordValue = data.password as string;
+    const nextPasswordError = validatePassword(passwordValue);
+
+    if (nextPasswordError) {
+      setPasswordError(nextPasswordError);
+      setSubmitting(false);
+      return;
+    }
+
+    setPasswordError("");
+
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match!");
       setSubmitting(false);
@@ -102,7 +127,7 @@ export function RegisterForm() {
     const { error } = await signUp.email({
       name: data.name as string,
       email: data.email as string,
-      password: data.password as string,
+      password: passwordValue,
       image: avatar.trim() || undefined,
       callbackURL: "/login",
     });
@@ -199,6 +224,7 @@ export function RegisterForm() {
                 autoComplete="new-password"
                 placeholder="Create a password"
                 icon={<Lock className="size-4" />}
+                error={passwordError}
                 endAdornment={
                   <button
                     type="button"
@@ -214,6 +240,10 @@ export function RegisterForm() {
                   </button>
                 }
                 {...passwordRegistration}
+                onChange={(event) => {
+                  passwordRegistration.onChange(event);
+                  if (passwordError) setPasswordError("");
+                }}
                 onFocus={() => setRequirementsOpen(true)}
                 onBlur={(event) => {
                   passwordRegistration.onBlur(event);

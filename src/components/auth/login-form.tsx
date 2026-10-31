@@ -163,20 +163,6 @@ export function LoginForm() {
           })}
         />
 
-        <div className="flex items-center justify-end">
-          <button
-            type="button"
-            onClick={() =>
-              toast.info(
-                "Password recovery isn't set up yet.",
-              )
-            }
-            className="text-xs font-medium text-accent-deep transition-colors hover:text-accent"
-          >
-            Forgot password?
-          </button>
-        </div>
-
         {errors.root?.message ? (
           <p
             role="alert"

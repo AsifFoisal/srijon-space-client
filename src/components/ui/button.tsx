@@ -15,7 +15,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-accent text-white shadow-[0_12px_30px_-14px_rgba(232,73,29,0.85)] hover:bg-accent-deep",
+          "relative isolate overflow-hidden bg-accent text-white shadow-[0_12px_30px_-14px_rgba(232,73,29,0.85)] before:absolute before:left-1/2 before:top-1/2 before:-z-10 before:h-0 before:w-0 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-accent-deep before:transition-all before:duration-500 before:ease-out before:content-[''] hover:before:h-56 hover:before:w-56 after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:rounded-[inherit] after:bg-gradient-to-b after:from-transparent after:via-transparent after:to-white/20 after:opacity-30 after:content-['']",
         secondary: "bg-ink text-ivory hover:bg-dark-soft",
         outline:
           "border border-ink/20 bg-transparent text-ink hover:border-ink/50 hover:bg-ink/[0.04]",
