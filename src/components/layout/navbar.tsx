@@ -76,6 +76,14 @@ export function Navbar() {
   const isHome = pathname === "/";
   const onDark = isHome && !scrolled;
 
+  function handleHashLink(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (pathname !== "/") return;
+    event.preventDefault();
+    document
+      .getElementById("how-it-works")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   async function handleMobileLogout() {
     setMobileOpen(false);
     await logout();
@@ -113,18 +121,11 @@ export function Navbar() {
                     : "text-stone hover:text-ink",
               );
 
-              if (link.anchor) {
-                return (
-                  <a key={link.href} href={link.href} className={className}>
-                    {link.label}
-                  </a>
-                );
-              }
-
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={link.anchor ? handleHashLink : undefined}
                   className={className}
                   aria-current={active ? "page" : undefined}
                 >
@@ -241,23 +242,16 @@ export function Navbar() {
 
                   return (
                     <li key={link.href}>
-                      {link.anchor ? (
-                        <a
-                          href={link.href}
-                          className={className}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {content}
-                        </a>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          className={className}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {content}
-                        </Link>
-                      )}
+                      <Link
+                        href={link.href}
+                        className={className}
+                        onClick={(event) => {
+                          if (link.anchor) handleHashLink(event);
+                          setMobileOpen(false);
+                        }}
+                      >
+                        {content}
+                      </Link>
                     </li>
                   );
                 })}

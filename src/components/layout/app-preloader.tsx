@@ -5,6 +5,7 @@ import {
   useState,
   type ComponentType,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { TextLoaderProps } from "@/components/ui/text-loader";
 
 const PANEL_BACKGROUND = "#121110";
@@ -14,12 +15,18 @@ const PANEL_BACKGROUND = "#121110";
  * first means the page never flashes before the animation starts.
  */
 export function AppPreloader() {
-  const [done, setDone] = useState(false);
+  const pathname = usePathname();
+  // Only a document load on Home gets the intro. Arriving from another page,
+  // or reloading any other route, starts with the loader already finished.
+  const [done, setDone] = useState(pathname !== "/");
   const [Loader, setLoader] = useState<ComponentType<TextLoaderProps> | null>(
     null,
   );
+  const showLoader = !done && pathname === "/";
 
   useEffect(() => {
+    if (!showLoader) return;
+
     let active = true;
 
     import("@/components/ui/text-loader")
@@ -34,11 +41,11 @@ export function AppPreloader() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [showLoader]);
 
   // Hide the page scrollbar while the intro covers the screen.
   useEffect(() => {
-    if (done) return;
+    if (!showLoader) return;
 
     const html = document.documentElement;
     const body = document.body;
@@ -52,9 +59,9 @@ export function AppPreloader() {
       html.style.overflow = previousHtmlOverflow;
       body.style.overflow = previousBodyOverflow;
     };
-  }, [done]);
+  }, [showLoader]);
 
-  if (done) return null;
+  if (!showLoader) return null;
 
   if (!Loader) {
     return (
