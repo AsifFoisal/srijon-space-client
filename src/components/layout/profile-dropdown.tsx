@@ -58,13 +58,13 @@ export function ProfileDropdown({ light = false }: { light?: boolean }) {
           <span
             className={cn(
               "hidden text-[13px] font-medium sm:block",
-              light ? "text-ivory" : "text-ink",
+              light ? "text-on-dark" : "text-ink",
             )}
           >
             {user.name.split(" ")[0]}
           </span>
           <ChevronDown
-            className={cn("size-3.5", light ? "text-ivory/70" : "text-stone")}
+            className={cn("size-3.5", light ? "text-on-dark/70" : "text-stone")}
             aria-hidden="true"
           />
         </button>

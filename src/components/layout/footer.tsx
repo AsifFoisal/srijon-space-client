@@ -135,12 +135,12 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="grain bg-dark text-ivory">
+    <footer className="grain bg-dark text-on-dark">
       <div className="shell shell-wide relative z-10 py-16 lg:py-20">
         <div className="grid gap-14 lg:grid-cols-[1.05fr_1.6fr] lg:gap-20">
           <div>
             <Logo light />
-            <p className="mt-6 max-w-sm text-[15px] leading-7 text-ivory/60">
+            <p className="mt-6 max-w-sm text-[15px] leading-7 text-on-dark/60">
               Connecting creative minds with inspiring spaces. Find your next
               studio, bring your vision to life, and create without limits.
             </p>
@@ -153,7 +153,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex size-10 items-center justify-center rounded-full border border-white/15 text-ivory/70 transition-colors hover:border-accent hover:bg-accent hover:text-white"
+                  className="flex size-10 items-center justify-center rounded-full border border-white/15 text-on-dark/70 transition-colors hover:border-accent hover:bg-accent hover:text-white"
                 >
                   <social.icon className="size-4" aria-hidden="true" />
                 </a>
@@ -163,13 +163,13 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X"
-                className="flex size-10 items-center justify-center rounded-full border border-white/15 text-ivory/70 transition-colors hover:border-accent hover:bg-accent hover:text-white"
+                className="flex size-10 items-center justify-center rounded-full border border-white/15 text-on-dark/70 transition-colors hover:border-accent hover:bg-accent hover:text-white"
               >
                 <XLogo className="size-3.5" />
               </a>
             </div>
 
-            <p className="mt-10 font-display text-[13px] uppercase tracking-[0.22em] text-ivory/30">
+            <p className="mt-10 font-display text-[13px] uppercase tracking-[0.22em] text-on-dark/30">
               New York · Est. 2021
             </p>
           </div>
@@ -177,7 +177,7 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
             {columns.map((column) => (
               <div key={column.title}>
-                <h3 className="text-[11px] font-medium uppercase tracking-[0.22em] text-ivory/40">
+                <h3 className="text-[11px] font-medium uppercase tracking-[0.22em] text-on-dark/40">
                   {column.title}
                 </h3>
                 <ul className="mt-5 space-y-3">
@@ -185,7 +185,7 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-ivory/65 transition-colors hover:text-accent"
+                        className="text-sm text-on-dark/65 transition-colors hover:text-accent"
                       >
                         {link.label}
                       </Link>
@@ -207,7 +207,7 @@ export function Footer() {
           <NewsletterForm />
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-ivory/35 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-on-dark/35 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 StudioSpace. All rights reserved.</p>
           <p>Photography via Unsplash &amp; Pexels.</p>
         </div>

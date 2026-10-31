@@ -44,7 +44,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-24 bg-dark py-20 text-ivory lg:py-28"
+      className="scroll-mt-24 bg-dark py-20 text-on-dark lg:py-28"
     >
       <div className="shell shell-wide">
         <div>
@@ -70,14 +70,14 @@ export function HowItWorks() {
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <step.icon
-                      className="size-5 text-ivory/35 transition-colors duration-300 group-hover:text-accent"
+                      className="size-5 text-on-dark/35 transition-colors duration-300 group-hover:text-accent"
                       aria-hidden="true"
                     />
                   </div>
                   <h3 className="mt-5 font-display text-xl tracking-[-0.03em]">
                     {step.title}
                   </h3>
-                  <p className="mt-2 max-w-xs text-sm leading-6 text-ivory/55">
+                  <p className="mt-2 max-w-xs text-sm leading-6 text-on-dark/55">
                     {step.description}
                   </p>
                 </div>

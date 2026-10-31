@@ -34,7 +34,7 @@ export function RatingBadge({
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-semibold text-ivory backdrop-blur-sm",
+          "inline-flex items-center gap-1.5 rounded-full bg-dark/80 px-2.5 py-1 text-[11px] font-semibold text-on-dark backdrop-blur-sm",
           className,
         )}
       >
@@ -46,14 +46,14 @@ export function RatingBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-semibold text-ivory backdrop-blur-sm",
+        "inline-flex items-center gap-1.5 rounded-full bg-dark/80 px-2.5 py-1 text-[11px] font-semibold text-on-dark backdrop-blur-sm",
         className,
       )}
     >
       <Star className="size-3 fill-accent text-accent" aria-hidden="true" />
       {rating.toFixed(1)}
       {typeof count === "number" ? (
-        <span className="font-normal text-ivory/70">({count})</span>
+        <span className="font-normal text-on-dark/70">({count})</span>
       ) : null}
     </span>
   );

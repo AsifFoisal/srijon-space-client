@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --ivory: #f7f3eb;
   --paper: #fffcf6;
@@ -12,6 +14,7 @@
   --accent-soft: #f9e1d5;
   --dark: #121110;
   --dark-soft: #1b1916;
+  --on-dark: #f7f3eb;
 
   /* Standard shadcn tokens, mapped to the StudioSpace palette. */
   --background: var(--ivory);
@@ -35,6 +38,22 @@
   --radius: 0.75rem;
 }
 
+.dark {
+  color-scheme: dark;
+
+  --ivory: #121110;
+  --paper: #1b1916;
+  --sand: #26221d;
+  --stone: #a9a196;
+  --ink: #f7f3eb;
+  --line: #34302a;
+  --accent: #ff5a2a;
+  --accent-deep: #ff7a45;
+  --accent-soft: #3a2118;
+  --dark: #0b0a09;
+  --dark-soft: #171512;
+}
+
 @theme inline {
   --color-ivory: var(--ivory);
   --color-paper: var(--paper);
@@ -47,6 +66,7 @@
   --color-accent-soft: var(--accent-soft);
   --color-dark: var(--dark);
   --color-dark-soft: var(--dark-soft);
+  --color-on-dark: var(--on-dark);
   --font-sans: var(--font-inter);
   --font-display: var(--font-grotesk);
 
@@ -105,6 +125,12 @@
   input[type="time"],
   select {
     color-scheme: light;
+  }
+
+  .dark input[type="date"],
+  .dark input[type="time"],
+  .dark select {
+    color-scheme: dark;
   }
 }
 

@@ -54,7 +54,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           autoComplete="email"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? "newsletter-error" : undefined}
-          className="h-11 min-w-0 flex-1 bg-transparent text-sm text-ivory placeholder:text-ivory/35 focus:outline-none"
+          className="h-11 min-w-0 flex-1 bg-transparent text-sm text-on-dark placeholder:text-on-dark/35 focus:outline-none"
         />
         <button
           type="submit"
@@ -65,11 +65,11 @@ export function NewsletterForm({ className }: { className?: string }) {
         </button>
       </div>
       {error ? (
-        <p id="newsletter-error" role="alert" className="mt-2 text-xs text-accent-soft">
+        <p id="newsletter-error" role="alert" className="mt-2 text-xs text-accent">
           {error}
         </p>
       ) : (
-        <p className="mt-2.5 text-xs text-ivory/35">
+        <p className="mt-2.5 text-xs text-on-dark/35">
           One thoughtful email a month. Unsubscribe anytime.
         </p>
       )}

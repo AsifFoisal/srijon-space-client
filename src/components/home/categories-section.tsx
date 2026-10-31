@@ -39,7 +39,7 @@ export function CategoriesSection() {
               >
                 <Link
                   href={`/studios?category=${encodeURIComponent(category.value)}`}
-                  className="group relative flex h-[300px] flex-col justify-end overflow-hidden rounded-2xl bg-dark p-6 text-ivory lg:h-[340px]"
+                  className="group relative flex h-[300px] flex-col justify-end overflow-hidden rounded-2xl bg-dark p-6 text-on-dark lg:h-[340px]"
                 >
                   <SmartImage
                     src={category.image}
@@ -52,7 +52,7 @@ export function CategoriesSection() {
 
                   <div className="relative z-10">
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-[10px] uppercase tracking-[0.24em] text-ivory/45">
+                      <span className="text-[10px] uppercase tracking-[0.24em] text-on-dark/45">
                         0{index + 1}
                       </span>
                       <span className="flex size-9 items-center justify-center rounded-full border border-white/25 bg-white/5 transition-colors duration-300 group-hover:border-accent group-hover:bg-accent">
@@ -65,10 +65,10 @@ export function CategoriesSection() {
                     <h3 className="mt-4 font-display text-2xl tracking-[-0.03em] lg:text-[28px]">
                       {category.title}
                     </h3>
-                    <p className="mt-1.5 line-clamp-2 max-w-sm text-sm leading-6 text-ivory/60">
+                    <p className="mt-1.5 line-clamp-2 max-w-sm text-sm leading-6 text-on-dark/60">
                       {category.description}
                     </p>
-                    <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-ivory/40">
+                    <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-on-dark/40">
                       {pluralize(count, "space")} available
                     </p>
                   </div>

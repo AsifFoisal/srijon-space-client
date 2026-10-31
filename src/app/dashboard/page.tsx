@@ -100,7 +100,7 @@ function DashboardContent() {
         }
       />
 
-      <div className="mt-8 flex flex-col gap-5 rounded-2xl bg-dark p-6 text-ivory sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <div className="mt-8 flex flex-col gap-5 rounded-2xl bg-dark p-6 text-on-dark sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <div className="flex items-center gap-4">
           <Avatar
             src={user.avatar}
@@ -112,20 +112,20 @@ function DashboardContent() {
             <p className="font-display text-2xl tracking-[-0.03em]">
               {user.name}
             </p>
-            <p className="text-sm text-ivory/55">{user.email}</p>
-            <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-ivory/35">
+            <p className="text-sm text-on-dark/55">{user.email}</p>
+            <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-on-dark/35">
               Member since {user.memberSince}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-ivory/70">
+          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-on-dark/70">
             Creator
           </span>
-          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-ivory/70">
+          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-on-dark/70">
             Host
           </span>
-          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-ivory/70">
+          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-on-dark/70">
             {favorites.length} saved
           </span>
         </div>

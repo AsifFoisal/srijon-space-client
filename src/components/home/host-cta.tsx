@@ -34,7 +34,7 @@ export function HostCta() {
                 <h2 className="mt-4 max-w-2xl text-balance font-display text-[clamp(2.4rem,5vw,4.4rem)] leading-[0.98] tracking-[-0.05em] text-white">
                   Your Studio Has a Story. Let Creators Be Part of It.
                 </h2>
-                <p className="mt-5 max-w-xl text-[15px] leading-7 text-ivory/65">
+                <p className="mt-5 max-w-xl text-[15px] leading-7 text-on-dark/65">
                   Turn your creative space into an opportunity. Showcase your
                   studio and connect with people who need a place to create.
                 </p>
@@ -58,14 +58,14 @@ export function HostCta() {
 
             <div>
               <div className="rounded-2xl border border-white/15 bg-white/[0.07] p-6 backdrop-blur-md sm:p-8">
-                <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-ivory/50">
+                <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-on-dark/50">
                   Why hosts choose StudioSpace
                 </p>
                 <ul className="mt-5 space-y-4">
                   {hostPoints.map((point) => (
                     <li
                       key={point}
-                      className="flex items-start gap-3 text-sm leading-6 text-ivory/75"
+                      className="flex items-start gap-3 text-sm leading-6 text-on-dark/75"
                     >
                       <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
                         <Check className="size-3" aria-hidden="true" />
@@ -77,13 +77,13 @@ export function HostCta() {
                 <div className="mt-7 grid grid-cols-2 gap-4 border-t border-white/10 pt-5">
                   <div>
                     <p className="font-display text-3xl text-white">4.9</p>
-                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-ivory/40">
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-on-dark/40">
                       Avg host rating
                     </p>
                   </div>
                   <div>
                     <p className="font-display text-3xl text-white">12</p>
-                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-ivory/40">
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-on-dark/40">
                       Active spaces
                     </p>
                   </div>

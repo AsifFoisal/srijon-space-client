@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/auth-context";
 import { Logo } from "@/components/layout/logo";
 import { ProfileDropdown } from "@/components/layout/profile-dropdown";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
@@ -106,7 +107,7 @@ export function Navbar() {
                 onDark
                   ? active
                     ? "text-white"
-                    : "text-ivory/65 hover:text-white"
+                    : "text-on-dark/65 hover:text-white"
                   : active
                     ? "text-ink"
                     : "text-stone hover:text-ink",
@@ -141,6 +142,9 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2.5">
+            <div className="hidden sm:flex">
+              <ModeToggle light={onDark} />
+            </div>
             {!isReady ? (
               <div className="hidden items-center gap-2 sm:flex">
                 <Skeleton className="h-9 w-20 rounded-full" />
@@ -155,7 +159,7 @@ export function Navbar() {
                   className={buttonStyles({
                     variant: "ghost",
                     size: "sm",
-                    className: onDark ? "text-ivory hover:bg-white/10" : "",
+                    className: onDark ? "text-on-dark hover:bg-white/10" : "",
                   })}
                 >
                   Log in
@@ -181,7 +185,7 @@ export function Navbar() {
               className={cn(
                 "flex size-11 items-center justify-center rounded-full border transition-colors lg:hidden",
                 onDark
-                  ? "border-white/20 bg-white/10 text-ivory hover:bg-white/20"
+                  ? "border-white/20 bg-white/10 text-on-dark hover:bg-white/20"
                   : "border-line bg-paper text-ink hover:border-ink/30",
               )}
             >
@@ -196,7 +200,7 @@ export function Navbar() {
           <button
             type="button"
             aria-label="Close menu"
-            className="fixed inset-0 z-[60] cursor-default bg-ink/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[60] cursor-default bg-dark/60 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
           <aside
@@ -205,14 +209,17 @@ export function Navbar() {
           >
             <div className="flex items-center justify-between border-b border-line/70 px-5 py-4">
               <Logo onNavigate={() => setMobileOpen(false)} />
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                className="flex size-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:border-ink/30"
-                aria-label="Close menu"
-              >
-                <X className="size-4" aria-hidden="true" />
-              </button>
+              <div className="flex items-center gap-2">
+                <ModeToggle />
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex size-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:border-ink/30"
+                  aria-label="Close menu"
+                >
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              </div>
             </div>
 
             <nav className="flex-1 px-5 py-8" aria-label="Mobile primary">

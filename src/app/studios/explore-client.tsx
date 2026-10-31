@@ -246,17 +246,17 @@ export function ExploreClient() {
 
   return (
     <>
-      <section className="bg-dark pb-14 pt-28 text-ivory sm:pt-32">
+      <section className="bg-dark pb-14 pt-28 text-on-dark sm:pt-32">
         <div className="shell shell-wide">
           <nav
-            className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-ivory/40"
+            className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-on-dark/40"
             aria-label="Breadcrumb"
           >
-            <Link href="/" className="transition-colors hover:text-ivory">
+            <Link href="/" className="transition-colors hover:text-on-dark">
               Home
             </Link>
             <span aria-hidden="true">/</span>
-            <span className="text-ivory/70">Explore Studios</span>
+            <span className="text-on-dark/70">Explore Studios</span>
           </nav>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -265,12 +265,12 @@ export function ExploreClient() {
               <h1 className="mt-3 text-balance font-display text-[clamp(2.7rem,5.5vw,4.8rem)] leading-[0.96] tracking-[-0.05em]">
                 Explore Creative Spaces
               </h1>
-              <p className="mt-4 max-w-2xl text-[15px] leading-7 text-ivory/60">
+              <p className="mt-4 max-w-2xl text-[15px] leading-7 text-on-dark/60">
                 Find the perfect environment for your next project, shoot,
                 recording session, or creative collaboration.
               </p>
             </div>
-            <p className="text-sm text-ivory/50">
+            <p className="text-sm text-on-dark/50">
               <span className="font-display text-3xl text-white">
                 {isReady ? activeStudios.length : 12}
               </span>{" "}
@@ -284,7 +284,7 @@ export function ExploreClient() {
             role="search"
           >
             <Search
-              className="size-4 shrink-0 text-ivory/40"
+              className="size-4 shrink-0 text-on-dark/40"
               aria-hidden="true"
             />
             <label htmlFor="explore-search" className="sr-only">
@@ -300,7 +300,7 @@ export function ExploreClient() {
                 }))
               }
               placeholder="Search by studio, category, or neighbourhood"
-              className="h-11 min-w-0 flex-1 bg-transparent text-sm text-ivory placeholder:text-ivory/35 focus:outline-none"
+              className="h-11 min-w-0 flex-1 bg-transparent text-sm text-on-dark placeholder:text-on-dark/35 focus:outline-none"
             />
             <button
               type="submit"

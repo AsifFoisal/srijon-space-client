@@ -91,10 +91,10 @@ export function StudioGallery({
         </Swiper>
 
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-4">
-          <span className="rounded-full bg-ink/70 px-3 py-1.5 text-[11px] font-medium tracking-wide text-ivory backdrop-blur">
+          <span className="rounded-full bg-dark/70 px-3 py-1.5 text-[11px] font-medium tracking-wide text-on-dark backdrop-blur">
             Photo {activeIndex + 1} / {images.length}
           </span>
-          <span className="hidden items-center gap-1.5 rounded-full bg-ink/60 px-3 py-1.5 text-[11px] text-ivory/80 backdrop-blur sm:flex">
+          <span className="hidden items-center gap-1.5 rounded-full bg-dark/60 px-3 py-1.5 text-[11px] text-on-dark/80 backdrop-blur sm:flex">
             <Images className="size-3.5" aria-hidden="true" />
             Studio gallery
           </span>
@@ -106,7 +106,7 @@ export function StudioGallery({
               type="button"
               onClick={() => mainSwiper?.slidePrev()}
               aria-label="Previous photo"
-              className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-ink/50 text-ivory backdrop-blur transition-colors hover:bg-ink/80"
+              className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-dark/50 text-on-dark backdrop-blur transition-colors hover:bg-dark/80"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -114,7 +114,7 @@ export function StudioGallery({
               type="button"
               onClick={() => mainSwiper?.slideNext()}
               aria-label="Next photo"
-              className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-ink/50 text-ivory backdrop-blur transition-colors hover:bg-ink/80"
+              className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-dark/50 text-on-dark backdrop-blur transition-colors hover:bg-dark/80"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>
@@ -158,7 +158,7 @@ export function StudioGallery({
 
       {lightboxOpen ? (
         <div
-          className="fixed inset-0 z-[85] overflow-y-auto bg-dark/95 p-4 text-ivory backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[85] overflow-y-auto bg-dark/95 p-4 text-on-dark backdrop-blur-sm sm:p-8"
           role="dialog"
           aria-modal="true"
           aria-label={`${title} gallery`}
@@ -166,10 +166,10 @@ export function StudioGallery({
             <div className="mx-auto flex min-h-full max-w-6xl flex-col">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-ivory/45">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-on-dark/45">
                     {title}
                   </p>
-                  <p className="mt-1 text-sm text-ivory/70">
+                  <p className="mt-1 text-sm text-on-dark/70">
                     Photo {lightboxIndex + 1} of {images.length}
                   </p>
                 </div>
@@ -177,7 +177,7 @@ export function StudioGallery({
                   type="button"
                   onClick={() => setLightboxOpen(false)}
                   aria-label="Close gallery"
-                  className="flex size-11 items-center justify-center rounded-full border border-white/20 text-ivory transition-colors hover:bg-white/10"
+                  className="flex size-11 items-center justify-center rounded-full border border-white/20 text-on-dark transition-colors hover:bg-white/10"
                 >
                   <X className="size-5" aria-hidden="true" />
                 </button>
@@ -200,7 +200,7 @@ export function StudioGallery({
                     )
                   }
                   aria-label="Previous photo"
-                  className="absolute left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/60 text-ivory backdrop-blur transition-colors hover:bg-dark"
+                  className="absolute left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/60 text-on-dark backdrop-blur transition-colors hover:bg-dark"
                 >
                   <ChevronLeft className="size-5" aria-hidden="true" />
                 </button>
@@ -210,7 +210,7 @@ export function StudioGallery({
                     setLightboxIndex((current) => (current + 1) % images.length)
                   }
                   aria-label="Next photo"
-                  className="absolute right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/60 text-ivory backdrop-blur transition-colors hover:bg-dark"
+                  className="absolute right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/60 text-on-dark backdrop-blur transition-colors hover:bg-dark"
                 >
                   <ChevronRight className="size-5" aria-hidden="true" />
                 </button>

@@ -73,10 +73,10 @@ export default function NotFound() {
               </span>
             </div>
             <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-dark/60 p-4 backdrop-blur-md sm:inset-x-7 sm:bottom-7">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-ivory/45">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-on-dark/45">
                 Still looking?
               </p>
-              <p className="mt-1.5 text-sm leading-6 text-ivory/80">
+              <p className="mt-1.5 text-sm leading-6 text-on-dark/80">
                 The best spaces go fast. Browse the marketplace and book the
                 room your next project deserves.
               </p>

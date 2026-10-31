@@ -115,14 +115,14 @@ export function HeroSlider() {
               <div className="relative z-10 flex h-full items-center">
                 <div className="shell shell-wide w-full pt-24">
                   <div className="max-w-3xl">
-                    <p className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-ivory/60">
+                    <p className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-on-dark/60">
                       <span className="h-px w-10 bg-accent" aria-hidden="true" />
                       {slide.kicker}
                     </p>
                     <HeadingTag className="mt-6 text-balance font-display text-[clamp(2.9rem,6.5vw,6.1rem)] font-medium leading-[0.94] tracking-[-0.055em] text-white">
                       {slide.title}
                     </HeadingTag>
-                    <p className="mt-6 max-w-xl text-pretty text-[15px] leading-7 text-ivory/70 sm:text-base">
+                    <p className="mt-6 max-w-xl text-pretty text-[15px] leading-7 text-on-dark/70 sm:text-base">
                       {slide.description}
                     </p>
 
@@ -176,11 +176,11 @@ export function HeroSlider() {
         <div className="shell shell-wide">
           <div className="pointer-events-auto flex flex-col gap-5 border-t border-white/15 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-5">
-              <p className="font-display text-sm tracking-[0.12em] text-ivory/70">
+              <p className="font-display text-sm tracking-[0.12em] text-on-dark/70">
                 <span className="text-white">
                   {String(activeIndex + 1).padStart(2, "0")}
                 </span>
-                <span className="mx-1.5 text-ivory/30">/</span>
+                <span className="mx-1.5 text-on-dark/30">/</span>
                 {String(slides.length).padStart(2, "0")}
               </p>
               <div className="flex items-center gap-1.5" aria-hidden="true">
@@ -198,7 +198,7 @@ export function HeroSlider() {
               </div>
             </div>
 
-            <div className="hidden items-center gap-8 text-[11px] uppercase tracking-[0.2em] text-ivory/50 lg:flex">
+            <div className="hidden items-center gap-8 text-[11px] uppercase tracking-[0.2em] text-on-dark/50 lg:flex">
               <span>{studioCount} curated spaces</span>
               <span className="h-3 w-px bg-white/15" aria-hidden="true" />
               <span>5 creative categories</span>
@@ -211,7 +211,7 @@ export function HeroSlider() {
                 type="button"
                 onClick={() => swiper?.slidePrev()}
                 aria-label="Previous slide"
-                className="flex size-11 items-center justify-center rounded-full border border-white/25 text-ivory transition-colors hover:border-white/60 hover:bg-white/10"
+                className="flex size-11 items-center justify-center rounded-full border border-white/25 text-on-dark transition-colors hover:border-white/60 hover:bg-white/10"
               >
                 <ChevronLeft className="size-4" aria-hidden="true" />
               </button>
@@ -219,7 +219,7 @@ export function HeroSlider() {
                 type="button"
                 onClick={() => swiper?.slideNext()}
                 aria-label="Next slide"
-                className="flex size-11 items-center justify-center rounded-full border border-white/25 text-ivory transition-colors hover:border-white/60 hover:bg-white/10"
+                className="flex size-11 items-center justify-center rounded-full border border-white/25 text-on-dark transition-colors hover:border-white/60 hover:bg-white/10"
               >
                 <ChevronRight className="size-4" aria-hidden="true" />
               </button>

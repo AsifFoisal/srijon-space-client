@@ -23,7 +23,8 @@ const buttonVariants = cva(
         danger: "bg-ink text-ivory hover:bg-accent-deep",
         light:
           "border border-white/25 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20",
-        dark: "bg-ivory text-ink hover:bg-sand",
+        dark:
+          "bg-[#f7f3eb] text-[#171512] hover:bg-[#ece4d5]",
       },
       size: {
         sm: "h-10 px-4 text-[13px]",

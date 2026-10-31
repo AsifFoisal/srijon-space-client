@@ -20,7 +20,7 @@ export function StatCard({
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl border p-5",
-        tone === "dark" && "border-white/10 bg-dark text-ivory",
+        tone === "dark" && "border-white/10 bg-dark text-on-dark",
         tone === "accent" && "border-accent-soft bg-accent-soft text-ink",
         tone === "light" && "border-line bg-paper text-ink",
         className,
@@ -30,7 +30,7 @@ export function StatCard({
         <p
           className={cn(
             "text-[11px] font-medium uppercase tracking-[0.18em]",
-            tone === "dark" ? "text-ivory/55" : "text-stone",
+            tone === "dark" ? "text-on-dark/55" : "text-stone",
           )}
         >
           {label}
@@ -39,7 +39,7 @@ export function StatCard({
           className={cn(
             "flex size-9 items-center justify-center rounded-full",
             tone === "dark"
-              ? "bg-white/10 text-ivory"
+              ? "bg-white/10 text-on-dark"
               : "bg-sand text-ink",
           )}
         >
@@ -53,7 +53,7 @@ export function StatCard({
         <p
           className={cn(
             "mt-2 text-xs leading-5",
-            tone === "dark" ? "text-ivory/50" : "text-stone",
+            tone === "dark" ? "text-on-dark/50" : "text-stone",
           )}
         >
           {hint}

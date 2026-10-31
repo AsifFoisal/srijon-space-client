@@ -110,7 +110,7 @@ export function AboutContent() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex flex-col justify-between rounded-2xl bg-dark p-6 text-ivory">
+              <div className="flex flex-col justify-between rounded-2xl bg-dark p-6 text-on-dark">
                 <p className="kicker kicker-light">Our promise</p>
                 <p className="mt-3 font-display text-xl leading-tight tracking-[-0.02em]">
                   Transparent pricing. Thoughtful spaces. Real support.
@@ -240,7 +240,7 @@ export function AboutContent() {
 
       <section className="py-20">
         <div className="shell shell-wide">
-          <div className="relative overflow-hidden rounded-3xl bg-dark px-6 py-16 text-center text-ivory sm:px-12 lg:py-20">
+          <div className="relative overflow-hidden rounded-3xl bg-dark px-6 py-16 text-center text-on-dark sm:px-12 lg:py-20">
             <SmartImage
               src="/images/about/host-cta.jpg"
               alt=""
@@ -254,7 +254,7 @@ export function AboutContent() {
               <h2 className="mx-auto mt-4 max-w-3xl text-balance font-display text-[clamp(2.4rem,4.5vw,3.8rem)] leading-[1.02] tracking-[-0.05em]">
                 Find Your Creative Space.
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-ivory/60">
+              <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-on-dark/60">
                 Browse the marketplace, book by the hour, and get back to what
                 you do best. Your next great session is a few clicks away.
               </p>
