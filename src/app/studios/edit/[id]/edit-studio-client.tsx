@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { useMarketplace } from "@/context/marketplace-context";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { StudioForm } from "@/components/dashboard/studio-form";
+import { EditStudioForm } from "@/components/dashboard/edit-studio-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
@@ -87,7 +87,7 @@ function EditStudioContent({ id }: { id: string }) {
         }
       />
       <div className="mt-8">
-        <StudioForm mode="edit" studio={studio} />
+        <EditStudioForm mode="edit" studio={studio} />
       </div>
     </div>
   );

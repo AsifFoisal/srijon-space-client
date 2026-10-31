@@ -14,7 +14,7 @@ export default function AddStudioPage() {
           description="Showcase your studio to creators looking for the perfect environment to bring their projects to life."
         />
         <div className="mt-8">
-          <StudioForm mode="create" />
+          <StudioForm />
         </div>
       </div>
     </RequireAuth>
