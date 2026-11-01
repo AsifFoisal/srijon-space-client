@@ -73,6 +73,32 @@ export function getInitials(name: string) {
     .join("");
 }
 
+// Placeholder ratings until real ones exist in the database — deterministic
+// per studio, so the same listing always shows the same score.
+export function getMockRating(id: string) {
+  const seed = Number.parseInt(id.slice(-6), 16) || 0;
+  return {
+    rating: Math.round((4.3 + (seed % 7) / 10) * 10) / 10,
+    reviewCount: 6 + (seed % 40),
+  };
+}
+
+// Uploads an image file to imgbb and resolves with the hosted URL.
+export async function uploadToImgbb(file: File) {
+  const body = new FormData();
+  body.append("image", file);
+
+  const res = await fetch(
+    `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+    { method: "POST", body },
+  );
+  const data = await res.json();
+  if (!data?.success) {
+    throw new Error("Image upload failed.");
+  }
+  return data.data.url as string;
+}
+
 export const WEEKDAY_NAMES = [
   "Sunday",
   "Monday",

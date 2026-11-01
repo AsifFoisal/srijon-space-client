@@ -21,7 +21,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton, StudioGridSkeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getMockRating } from "@/lib/utils";
 
 const CATEGORY_OPTIONS: (StudioCategory | "All Categories")[] = [
   "All Categories",
@@ -56,12 +56,17 @@ export function ExploreClient() {
         if (!active) return;
         const list = Array.isArray(data) ? data : [];
         setStudios(
-          list.map((studio: Studio) => ({
-            ...studio,
-            hourlyRate: Number(studio.hourlyRate) || 0,
-            securityDeposit: Number(studio.securityDeposit) || 0,
-            capacity: Number(studio.capacity) || 0,
-          })),
+          list.map((studio: Studio) => {
+            const mock = getMockRating(studio._id);
+            return {
+              ...studio,
+              hourlyRate: Number(studio.hourlyRate) || 0,
+              securityDeposit: Number(studio.securityDeposit) || 0,
+              capacity: Number(studio.capacity) || 0,
+              rating: studio.rating ?? mock.rating,
+              reviewCount: studio.reviewCount ?? mock.reviewCount,
+            };
+          }),
         );
       })
       .catch(() => {

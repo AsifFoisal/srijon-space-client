@@ -12,7 +12,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { DetailsSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatDateLabel } from "@/lib/utils";
+import { formatDateLabel, getMockRating } from "@/lib/utils";
 
 const getStudio = cache(
   async (id: string): Promise<Studio | null> => {
@@ -28,6 +28,7 @@ const getStudio = cache(
       const data = await response.json();
       if (!data || !data._id) return null;
 
+      const mock = getMockRating(id);
       return {
         ...data,
         _id: String(data._id),
@@ -35,6 +36,8 @@ const getStudio = cache(
         securityDeposit: Number(data.securityDeposit) || 0,
         capacity: Number(data.capacity) || 1,
         amenities: Array.isArray(data.amenities) ? data.amenities : [],
+        rating: data.rating ?? mock.rating,
+        reviewCount: data.reviewCount ?? mock.reviewCount,
       } as Studio;
     } catch {
       return null;

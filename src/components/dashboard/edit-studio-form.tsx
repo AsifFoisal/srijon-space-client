@@ -9,6 +9,7 @@ import { useAuth } from "@/context/auth-context";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
+import { uploadToImgbb } from "@/lib/utils";
 
 const initialForm = {
   title: "",
@@ -67,6 +68,26 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
   const [imageUrls, setImageUrls] = useState<string[]>([""]);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    if (!files.length) return;
+    setIsUploading(true);
+    try {
+      const urls = await Promise.all(files.map(uploadToImgbb));
+      setImageUrls((current) => [
+        ...current.filter((url) => url.trim()),
+        ...urls,
+      ]);
+      toast.success("Images uploaded.");
+    } catch {
+      toast.error("Image upload failed. Please try again or paste a URL.");
+    } finally {
+      setIsUploading(false);
+      event.target.value = "";
+    }
+  }
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${studioId}`)
@@ -179,6 +200,27 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection
         index={1}
+        title="Host details"
+        description="These details come from your logged-in account."
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Your name"
+            value={user ? user.name : ""}
+            readOnly
+          />
+
+          <Input
+            label="Your email"
+            type="email"
+            value={user ? user.email : ""}
+            readOnly
+          />
+        </div>
+      </FormSection>
+
+      <FormSection
+        index={2}
         title="Studio information"
         description="Add a title, category, and description for your studio."
       >
@@ -216,7 +258,7 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
       </FormSection>
 
       <FormSection
-        index={2}
+        index={3}
         title="Pricing & capacity"
         description="Set your hourly rate, security deposit, and maximum capacity."
       >
@@ -254,7 +296,7 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
       </FormSection>
 
       <FormSection
-        index={3}
+        index={4}
         title="Location & images"
         description="Add your studio address and image URLs. The first image is the cover."
       >
@@ -305,19 +347,33 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
               </div>
             ))}
 
-            <button
-              type="button"
-              onClick={() => setImageUrls((current) => current.concat(""))}
-              className="justify-self-start text-[13px] font-medium text-ink transition-colors hover:text-accent"
-            >
-              + Add another image
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setImageUrls((current) => current.concat(""))}
+                className="text-[13px] font-medium text-ink transition-colors hover:text-accent"
+              >
+                + Add another image
+              </button>
+
+              <label className="cursor-pointer text-[13px] font-medium text-stone transition-colors hover:text-ink">
+                {isUploading ? "Uploading…" : "Upload images"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleUpload}
+                  disabled={isUploading}
+                />
+              </label>
+            </div>
           </div>
         </div>
       </FormSection>
 
       <FormSection
-        index={4}
+        index={5}
         title="Amenities"
         description="Select all facilities and equipment available in your studio."
       >

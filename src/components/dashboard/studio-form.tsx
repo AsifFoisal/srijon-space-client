@@ -9,6 +9,7 @@ import { useAuth } from "@/context/auth-context";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
+import { uploadToImgbb } from "@/lib/utils";
 
 const initialForm = {
   title: "",
@@ -63,6 +64,26 @@ export function StudioForm() {
   const [imageUrls, setImageUrls] = useState<string[]>([""]);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    if (!files.length) return;
+    setIsUploading(true);
+    try {
+      const urls = await Promise.all(files.map(uploadToImgbb));
+      setImageUrls((current) => [
+        ...current.filter((url) => url.trim()),
+        ...urls,
+      ]);
+      toast.success("Images uploaded.");
+    } catch {
+      toast.error("Image upload failed. Please try again or paste a URL.");
+    } finally {
+      setIsUploading(false);
+      event.target.value = "";
+    }
+  }
 
   const update = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -279,13 +300,27 @@ export function StudioForm() {
               </div>
             ))}
 
-            <button
-              type="button"
-              onClick={() => setImageUrls((current) => current.concat(""))}
-              className="justify-self-start text-[13px] font-medium text-ink transition-colors hover:text-accent"
-            >
-              + Add another image
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setImageUrls((current) => current.concat(""))}
+                className="text-[13px] font-medium text-ink transition-colors hover:text-accent"
+              >
+                + Add another image
+              </button>
+
+              <label className="cursor-pointer text-[13px] font-medium text-stone transition-colors hover:text-ink">
+                {isUploading ? "Uploading…" : "Upload images"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleUpload}
+                  disabled={isUploading}
+                />
+              </label>
+            </div>
           </div>
         </div>
       </FormSection>

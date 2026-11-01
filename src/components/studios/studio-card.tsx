@@ -32,9 +32,7 @@ export function StudioCard({
 
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3">
           <CategoryBadge>{studio.category}</CategoryBadge>
-          {studio.rating && studio.rating > 0 ? (
-            <RatingBadge rating={studio.rating} count={studio.reviewCount} />
-          ) : null}
+          <RatingBadge rating={studio.rating ?? 0} count={studio.reviewCount} />
         </div>
       </div>
 
