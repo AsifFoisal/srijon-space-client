@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, MapPin, Users } from "lucide-react";
+import { Aperture, MapPin } from "lucide-react";
 import type { Studio } from "@/lib/types";
-import { CategoryBadge, RatingBadge } from "@/components/ui/badge";
 import { SmartImage } from "@/components/ui/smart-image";
 import { formatCurrency } from "@/lib/utils";
 
@@ -13,69 +12,79 @@ export function StudioCard({
   priority?: boolean;
 }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line/80 bg-paper transition-all duration-500 hover:border-ink/25 hover:shadow-[0_24px_60px_-36px_rgba(23,21,18,0.45)]">
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <Link
-          href={`/studios/${studio._id}`}
-          aria-label={`View ${studio.title}`}
-          className="relative block h-full w-full"
-        >
+    <Link
+      href={`/studios/${studio._id}`}
+      aria-label={`View ${studio.title}`}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line/80 bg-paper transition-all duration-500 hover:border-ink/25 hover:shadow-[0_24px_60px_-36px_rgba(23,21,18,0.45)]"
+    >
+      <div className="relative">
+        <div className="relative aspect-[4/3] overflow-hidden bg-sand">
           <SmartImage
             src={studio.imageUrl}
             alt={studio.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
             priority={priority}
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
-        </Link>
 
-        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3">
-          <CategoryBadge>{studio.category}</CategoryBadge>
-          <RatingBadge rating={studio.rating ?? 0} count={studio.reviewCount} />
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent"
+            aria-hidden="true"
+          />
+
+          <span className="absolute left-1/2 top-3 -translate-x-1/2 whitespace-nowrap rounded-full bg-dark/80 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-on-dark backdrop-blur-sm">
+            {studio.category}
+          </span>
+        </div>
+
+        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-line bg-paper px-4 py-1.5 shadow-[0_1px_8px_rgba(23,21,18,0.28)]">
+          <span className="font-display text-lg tracking-[-0.02em] text-ink tabular-nums">
+            {formatCurrency(studio.hourlyRate)}
+          </span>
+          <span className="ml-1 text-xs text-stone">/ hr</span>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <p className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-stone">
-          <MapPin className="size-3" aria-hidden="true" />
-          {studio.address}
-        </p>
+      <div className="flex flex-1 flex-col px-5 pb-5">
+        <div className="mt-7 flex items-center gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-ink text-ivory">
+            <Aperture className="size-5" aria-hidden="true" />
+          </span>
 
-        <h3 className="mt-2 font-display text-xl leading-tight tracking-[-0.03em] text-ink">
-          <Link
-            href={`/studios/${studio._id}`}
-            className="transition-colors hover:text-accent-deep"
-          >
-            {studio.title}
-          </Link>
-        </h3>
+          <div className="min-w-0">
+            <h3 className="truncate font-display text-xl leading-tight tracking-[-0.03em] text-ink">
+              {studio.title}
+            </h3>
+            <p className="mt-1 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-stone">
+              <MapPin className="size-3 shrink-0" aria-hidden="true" />
+              <span className="truncate">{studio.address}</span>
+            </p>
+          </div>
+        </div>
 
-        <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone">
-          {studio.description}
-        </p>
+        <div className="mt-auto pt-4">
+          <div className="grid grid-cols-2 divide-x divide-line rounded-xl bg-ink/[0.04] px-4 py-3">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
+                Rating
+              </p>
+              <p className="mt-1 font-display text-lg leading-none tracking-[-0.02em] text-ink tabular-nums">
+                {studio.rating ? studio.rating.toFixed(1) : "—"}
+              </p>
+            </div>
 
-        <p className="mt-4 flex items-center gap-1.5 text-xs text-stone">
-          <Users className="size-3.5" aria-hidden="true" />
-          Up to {studio.capacity}
-        </p>
-
-        <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-          <p>
-            <span className="font-display text-2xl tracking-[-0.03em] text-ink tabular-nums">
-              {formatCurrency(studio.hourlyRate)}
-            </span>
-            <span className="text-xs text-stone"> / hr</span>
-          </p>
-          <Link
-            href={`/studios/${studio._id}`}
-            className="inline-flex items-center gap-1 text-[13px] font-medium text-ink transition-colors hover:text-accent"
-          >
-            View details
-            <ArrowUpRight className="size-3.5" aria-hidden="true" />
-          </Link>
+            <div className="pl-4">
+              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
+                Reviews
+              </p>
+              <p className="mt-1 font-display text-lg leading-none tracking-[-0.02em] text-ink tabular-nums">
+                {studio.reviewCount ?? 0}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

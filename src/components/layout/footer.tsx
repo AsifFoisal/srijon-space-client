@@ -212,6 +212,15 @@ export function Footer() {
           <p>Photography via Unsplash &amp; Pexels.</p>
         </div>
       </div>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none relative select-none overflow-hidden pt-6"
+      >
+        <p className="whitespace-nowrap text-center font-display text-[clamp(3.5rem,15vw,15rem)] font-medium leading-[0.72] tracking-[-0.04em] text-on-dark/[0.08] [mask-image:linear-gradient(to_bottom,black_25%,transparent_90%)]">
+          Srijon Space
+        </p>
+      </div>
     </footer>
   );
 }

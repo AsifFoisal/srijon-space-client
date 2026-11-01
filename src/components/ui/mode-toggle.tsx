@@ -1,34 +1,62 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-export function ModeToggle({ light = false }: { light?: boolean }) {
-  function toggleTheme() {
-    const isDark = document.documentElement.classList.toggle("dark");
+export function ModeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Sync the switch with the theme the pre-hydration script already applied.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  function handleToggle() {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle("dark", next);
     try {
-      localStorage.setItem("theme", isDark ? "dark" : "light");
+      localStorage.setItem("theme", next ? "dark" : "light");
     } catch {
       // The theme still switches for this visit if storage is unavailable.
     }
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      aria-label="Toggle light and dark mode"
-      title="Toggle light and dark mode"
-      onClick={toggleTheme}
-      className={cn(
-        "rounded-full border border-line bg-paper text-ink hover:border-ink/30 hover:bg-sand",
-        light &&
-          "border-white/20 bg-white/10 text-on-dark hover:border-white/40 hover:bg-white/20",
-      )}
-    >
-      <Moon className="size-5 dark:hidden" aria-hidden="true" />
-      <Sun className="hidden size-5 dark:block" aria-hidden="true" />
-    </Button>
+    <span className="theme-switch-wrap">
+      <label className="theme-switch" aria-label="Toggle light and dark mode">
+        <input type="checkbox" checked={isDark} onChange={handleToggle} />
+        <div className="switch-bg">
+          <div className="sky-stars">
+            <div className="star star-1" />
+            <div className="star star-2" />
+            <div className="star star-3" />
+            <div className="star star-4" />
+          </div>
+          <div className="sky-clouds">
+            <div className="cloud cloud-1" />
+            <div className="cloud cloud-2" />
+          </div>
+          <div className="sky-vault">
+            <div className="sun" />
+            <div className="moon">
+              <div className="craters">
+                <div className="crater crater-1" />
+                <div className="crater crater-2" />
+                <div className="crater crater-3" />
+              </div>
+            </div>
+          </div>
+          <div className="landscape">
+            <div className="mountain mountain-1" />
+            <div className="mountain mountain-2" />
+            <div className="terrain" />
+            <div className="tree tree-1" />
+            <div className="tree tree-2" />
+            <div className="tree tree-3" />
+          </div>
+        </div>
+      </label>
+    </span>
   );
 }
