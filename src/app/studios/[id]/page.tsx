@@ -12,13 +12,23 @@ import { RatingStars } from "@/components/ui/rating-stars";
 import { DetailsSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLabel, getMockRating } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 async function getStudio(id: string): Promise<Studio | null> {
   if (!/^[a-f0-9]{24}$/i.test(id)) return null;
 
+  const jwtToken = await auth.api.getToken({
+    headers: await headers(),
+  });
+
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,
-    { cache: "no-store" },
+    `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,{
+      cache: "no-store",
+      headers:{
+        authorization: jwtToken?.token,
+      }
+    },
   ).catch(() => null);
   if (!response || !response.ok) return null;
 

@@ -1,8 +1,10 @@
+'use client'
 import Link from "next/link";
-import { Aperture, MapPin } from "lucide-react";
+import { Aperture, ArrowUpRight, MapPin, Star } from "lucide-react";
 import type { Studio } from "@/lib/types";
 import { SmartImage } from "@/components/ui/smart-image";
-import { formatCurrency } from "@/lib/utils";
+import { buttonStyles } from "@/components/ui/button";
+import { cn, formatCurrency } from "@/lib/utils";
 
 export function StudioCard({
   studio,
@@ -52,7 +54,7 @@ export function StudioCard({
             <Aperture className="size-5" aria-hidden="true" />
           </span>
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h3 className="truncate font-display text-xl leading-tight tracking-[-0.03em] text-ink">
               {studio.title}
             </h3>
@@ -61,28 +63,31 @@ export function StudioCard({
               <span className="truncate">{studio.address}</span>
             </p>
           </div>
+
+          <div className="flex shrink-0 items-center gap-1">
+            <Star
+              className="size-4 fill-accent text-accent"
+              aria-hidden="true"
+            />
+            <span className="font-display text-base leading-none text-ink tabular-nums">
+              {studio.rating ? studio.rating.toFixed(1) : "—"}
+            </span>
+            <span className="text-xs text-stone tabular-nums">
+              ({studio.reviewCount ?? 0})
+            </span>
+          </div>
         </div>
 
         <div className="mt-auto pt-4">
-          <div className="grid grid-cols-2 divide-x divide-line rounded-xl bg-ink/[0.04] px-4 py-3">
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
-                Rating
-              </p>
-              <p className="mt-1 font-display text-lg leading-none tracking-[-0.02em] text-ink tabular-nums">
-                {studio.rating ? studio.rating.toFixed(1) : "—"}
-              </p>
-            </div>
-
-            <div className="pl-4">
-              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
-                Reviews
-              </p>
-              <p className="mt-1 font-display text-lg leading-none tracking-[-0.02em] text-ink tabular-nums">
-                {studio.reviewCount ?? 0}
-              </p>
-            </div>
-          </div>
+          <span
+            className={cn(
+              buttonStyles({ variant: "outline" }),
+              "w-full",
+            )}
+          >
+            View Details
+            <ArrowUpRight className="size-4" aria-hidden="true" />
+          </span>
         </div>
       </div>
     </Link>
