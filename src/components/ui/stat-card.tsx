@@ -46,7 +46,7 @@ export function StatCard({
           <Icon className="size-4" aria-hidden="true" />
         </span>
       </div>
-      <p className="mt-5 font-display text-4xl leading-none tracking-[-0.04em]">
+      <p className="mt-5 font-display text-4xl leading-none tracking-[-0.04em] tabular-nums">
         {value}
       </p>
       {hint ? (

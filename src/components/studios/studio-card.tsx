@@ -64,7 +64,7 @@ export function StudioCard({
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p>
-            <span className="font-display text-2xl tracking-[-0.03em] text-ink">
+            <span className="font-display text-2xl tracking-[-0.03em] text-ink tabular-nums">
               {formatCurrency(studio.hourlyRate)}
             </span>
             <span className="text-xs text-stone"> / hr</span>

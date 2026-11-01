@@ -89,7 +89,10 @@ async function StudioDetails({ id }: { id: string }) {
   }
 
   const reviews = getStudioReviews(id);
-  const images = [studio.imageUrl || "/images/studios/daylight-loft.jpg"];
+  const images =
+    studio.images && studio.images.length
+      ? studio.images
+      : [studio.imageUrl || "/images/studios/daylight-loft.jpg"];
   const specs = [
     { label: "Capacity", value: `${studio.capacity} guests` },
     { label: "Category", value: studio.category },

@@ -29,6 +29,7 @@ export interface Studio {
   capacity: number;
   address: string;
   imageUrl: string;
+  images?: string[];
   description: string;
   amenities: Amenity[];
   ownerEmail: string;

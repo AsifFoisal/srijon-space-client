@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/context/auth-context";
@@ -17,7 +17,6 @@ const initialForm = {
   securityDeposit: "",
   capacity: "",
   address: "",
-  imageUrl: "",
   description: "",
 };
 
@@ -65,6 +64,7 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
   const { user } = useAuth();
 
   const [form, setForm] = useState<typeof initialForm | null>(null);
+  const [imageUrls, setImageUrls] = useState<string[]>([""]);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -91,9 +91,15 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
           securityDeposit: String(data.securityDeposit || ""),
           capacity: String(data.capacity || ""),
           address: data.address || "",
-          imageUrl: data.imageUrl || "",
           description: data.description || "",
         });
+        setImageUrls(
+          Array.isArray(data.images) && data.images.length
+            ? data.images
+            : data.imageUrl
+              ? [data.imageUrl]
+              : [""],
+        );
         setAmenities(Array.isArray(data.amenities) ? data.amenities : []);
       })
       .catch(() => {
@@ -126,6 +132,8 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
 
     setIsSubmitting(true);
 
+    const images = imageUrls.map((url) => url.trim()).filter(Boolean);
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${studioId}`,
@@ -136,6 +144,8 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
           },
           body: JSON.stringify({
             ...form,
+            imageUrl: images[0] ?? "",
+            images,
             amenities: amenities,
             ownerEmail: user.email,
             ownerName: user.name,
@@ -245,8 +255,8 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
 
       <FormSection
         index={3}
-        title="Location & image"
-        description="Add your studio address and a main image URL."
+        title="Location & images"
+        description="Add your studio address and image URLs. The first image is the cover."
       >
         <div className="grid gap-4">
           <Input
@@ -257,14 +267,52 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
             required
           />
 
-          <Input
-            label="Image URL"
-            type="url"
-            placeholder="https://example.com/studio.jpg"
-            value={form.imageUrl}
-            onChange={(event) => update("imageUrl", event.target.value)}
-            required
-          />
+          <div className="grid gap-3">
+            {imageUrls.map((url, index) => (
+              <div key={index} className="flex items-end gap-2">
+                <Input
+                  label={
+                    index === 0 ? "Cover image URL" : `Image ${index + 1} URL`
+                  }
+                  type="url"
+                  placeholder="https://example.com/studio.jpg"
+                  value={url}
+                  onChange={(event) =>
+                    setImageUrls((current) =>
+                      current.map((item, i) =>
+                        i === index ? event.target.value : item,
+                      ),
+                    )
+                  }
+                  required={index === 0}
+                  containerClassName="flex-1"
+                />
+
+                {index > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setImageUrls((current) =>
+                        current.filter((_, i) => i !== index),
+                      )
+                    }
+                    aria-label={`Remove image ${index + 1}`}
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-stone transition-colors hover:border-accent hover:text-accent"
+                  >
+                    <X className="size-4" aria-hidden="true" />
+                  </button>
+                ) : null}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setImageUrls((current) => current.concat(""))}
+              className="justify-self-start text-[13px] font-medium text-ink transition-colors hover:text-accent"
+            >
+              + Add another image
+            </button>
+          </div>
         </div>
       </FormSection>
 

@@ -57,7 +57,7 @@ export function AuthShell({
 
           <div className="absolute inset-x-0 bottom-0 p-10 xl:p-14">
             <p className="kicker kicker-light">{kicker}</p>
-            <blockquote className="mt-4 max-w-lg text-balance font-display text-[28px] leading-[1.15] tracking-[-0.03em] text-white xl:text-[34px]">
+            <blockquote className="mt-4 max-w-lg text-balance font-display text-3xl leading-[1.15] tracking-[-0.03em] text-white xl:text-4xl">
               “{quote}”
             </blockquote>
             <p className="mt-4 text-xs text-on-dark/45">{caption}</p>

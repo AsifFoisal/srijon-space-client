@@ -47,23 +47,22 @@ function MyBookingsContent() {
 
   useEffect(() => {
     if (!user) return;
-    let active = true;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (active) setBookings(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
-        if (active) setBookings([]);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
+    const load = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user?.email}`,
+        );
+        const bookings: Booking[] = await res.json();
+        setBookings(Array.isArray(bookings) ? bookings : []);
+      } catch {
+        setBookings([]);
+      } finally {
+        setLoading(false);
+      }
     };
+
+    load();
   }, [user]);
 
   if (!user) return null;
@@ -71,28 +70,21 @@ function MyBookingsContent() {
   const sorted = [...bookings].sort((a, b) =>
     (b.createdAt || "").localeCompare(a.createdAt || ""),
   );
-  const pending = sorted.filter((booking) => booking.status === "Pending");
-  const confirmed = sorted.filter(
-    (booking) => booking.status === "Confirmed",
-  );
-  const completed = sorted.filter(
-    (booking) => booking.status === "Completed",
-  );
   const visible =
     tab === "All"
       ? sorted
       : sorted.filter((booking) => booking.status === tab);
 
-  function countFor(status: Tab) {
-    if (status === "All") return sorted.length;
-    return sorted.filter((booking) => booking.status === status).length;
-  }
+  const countFor = (status: Tab) =>
+    status === "All"
+      ? sorted.length
+      : sorted.filter((booking) => booking.status === status).length;
 
   async function handleCancel() {
     if (!cancelTarget) return;
     setCancelling(true);
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${cancelTarget._id}`,
         {
           method: "PATCH",
@@ -100,13 +92,8 @@ function MyBookingsContent() {
           body: JSON.stringify({ status: "Cancelled" }),
         },
       );
-      if (!response.ok) {
-        const result = await response.json().catch(() => null);
-        throw new Error(
-          result?.message ||
-            "We couldn't cancel this booking. Please try again.",
-        );
-      }
+      if (!res.ok) throw new Error("Failed to cancel the booking.");
+
       setBookings((current) =>
         current.map((booking) =>
           booking._id === cancelTarget._id
@@ -114,16 +101,10 @@ function MyBookingsContent() {
             : booking,
         ),
       );
-      toast.success(
-        "Booking cancelled. The space is available to book again.",
-      );
+      toast.success("Booking cancelled. The space is available to book again.");
       setCancelTarget(null);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "We couldn't cancel this booking. Please try again.",
-      );
+    } catch {
+      toast.error("We couldn't cancel this booking. Please try again.");
     } finally {
       setCancelling(false);
     }
@@ -149,25 +130,25 @@ function MyBookingsContent() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               label="Total bookings"
-              value={sorted.length}
+              value={countFor("All")}
               hint="Every request you've made"
               icon={CalendarCheck}
             />
             <StatCard
               label="Pending"
-              value={pending.length}
+              value={countFor("Pending")}
               hint="Waiting for host confirmation"
               icon={Clock3}
             />
             <StatCard
               label="Confirmed"
-              value={confirmed.length}
+              value={countFor("Confirmed")}
               hint="Sessions locked in"
               icon={CalendarClock}
             />
             <StatCard
               label="Completed"
-              value={completed.length}
+              value={countFor("Completed")}
               hint="Past sessions"
               icon={CheckCircle2}
             />
@@ -266,7 +247,7 @@ function MyBookingsContent() {
 
                     <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-stone">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-stone">
                           Date
                         </p>
                         <p className="mt-0.5 font-medium text-ink">
@@ -274,7 +255,7 @@ function MyBookingsContent() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-stone">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-stone">
                           Time
                         </p>
                         <p className="mt-0.5 font-medium text-ink">
@@ -283,7 +264,7 @@ function MyBookingsContent() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-stone">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-stone">
                           Duration
                         </p>
                         <p className="mt-0.5 font-medium text-ink">
@@ -291,7 +272,7 @@ function MyBookingsContent() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.14em] text-stone">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-stone">
                           Total
                         </p>
                         <p className="mt-0.5 font-medium text-ink">

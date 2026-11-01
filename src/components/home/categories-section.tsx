@@ -79,7 +79,7 @@ export function CategoriesSection() {
                         />
                       </span>
                     </div>
-                    <h3 className="mt-4 font-display text-2xl tracking-[-0.03em] lg:text-[28px]">
+                    <h3 className="mt-4 font-display text-2xl tracking-[-0.03em] lg:text-3xl">
                       {category.title}
                     </h3>
                     <p className="mt-1.5 line-clamp-2 max-w-sm text-sm leading-6 text-on-dark/60">

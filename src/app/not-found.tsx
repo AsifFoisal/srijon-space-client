@@ -4,27 +4,9 @@ import Link from "next/link";
 import { ArrowUpRight, Aperture } from "lucide-react";
 import { SmartImage } from "@/components/ui/smart-image";
 import { buttonStyles } from "@/components/ui/button";
+import { STUDIO_CATEGORIES } from "@/lib/constants";
 
-const suggestions = [
-  {
-    title: "The Daylight Loft",
-    image: "/images/studios/daylight-loft.jpg",
-    href: "/studios/daylight-loft",
-    category: "Photo Studio",
-  },
-  {
-    title: "The Quiet Mic",
-    image: "/images/studios/quiet-mic.jpg",
-    href: "/studios/quiet-mic",
-    category: "Podcast Lounge",
-  },
-  {
-    title: "Analog Music Suite",
-    image: "/images/studios/analog-suite.jpg",
-    href: "/studios/analog-suite",
-    category: "Music Suite",
-  },
-];
+const suggestions = STUDIO_CATEGORIES.slice(0, 3);
 
 export default function NotFound() {
   return (
@@ -85,18 +67,18 @@ export default function NotFound() {
         </div>
 
         <div className="mt-16 border-t border-line pt-8">
-          <p className="kicker">A few spaces you might like</p>
+          <p className="kicker">Or start from a category</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {suggestions.map((suggestion) => (
+            {suggestions.map((category) => (
               <Link
-                key={suggestion.href}
-                href={suggestion.href}
+                key={category.value}
+                href={`/studios?category=${encodeURIComponent(category.value)}`}
                 className="group flex items-center gap-4 rounded-2xl border border-line bg-paper p-3 transition-colors hover:border-ink/30"
               >
                 <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-sand">
                   <SmartImage
-                    src={suggestion.image}
-                    alt={suggestion.title}
+                    src={category.image}
+                    alt={category.title}
                     fill
                     sizes="64px"
                     className="object-cover"
@@ -104,10 +86,10 @@ export default function NotFound() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] uppercase tracking-[0.16em] text-stone">
-                    {suggestion.category}
+                    Category
                   </p>
                   <p className="mt-0.5 truncate font-display text-lg tracking-[-0.02em]">
-                    {suggestion.title}
+                    {category.title}
                   </p>
                 </div>
                 <ArrowUpRight

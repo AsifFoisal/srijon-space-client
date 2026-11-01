@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01",
+  "title": "Design System: Srijon Space",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Press Red-Orange", "canonical": "#e8491d", "tonalRamp": ["#4a1002", "#7a1f07", "#a82d0d", "#d13c14", "#e8491d", "#f07a55", "#f7ab8d", "#fce4d7"] },
+      "accent-deep": { "role": "primary", "displayName": "Press Red-Orange Deep", "canonical": "#c53a12", "tonalRamp": ["#3d0d02", "#6a1a06", "#962509", "#b9320e", "#c53a12", "#d36540", "#e29070", "#f2c3ad"] },
+      "accent-soft": { "role": "tertiary", "displayName": "Accent Tint", "canonical": "#f9e1d5", "tonalRamp": ["#4a2118", "#6e3124", "#94564a", "#c08876", "#f9e1d5", "#fae9e0", "#fbf1ea", "#fdf8f4"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#171512", "tonalRamp": ["#0b0a09", "#171512", "#2e2b26", "#4a463f", "#6f6a60", "#9a948a", "#c5bfb4", "#ece4d5"] },
+      "stone": { "role": "neutral", "displayName": "Stone", "canonical": "#6f6a60", "tonalRamp": ["#242220", "#3d3a35", "#565249", "#6f6a60", "#8d877c", "#a9a196", "#c9c3ba", "#e6e1d8"] },
+      "ivory": { "role": "neutral", "displayName": "Ivory", "canonical": "#f7f3eb", "tonalRamp": ["#3a362f", "#5a554b", "#857e70", "#b3ac9d", "#d5cfc0", "#e9e4d8", "#f7f3eb", "#fdfbf7"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#fffcf6", "tonalRamp": ["#45413a", "#6b665c", "#948e82", "#beb8ab", "#dcd6c9", "#efeadd", "#fffcf6", "#fffefb"] },
+      "sand": { "role": "neutral", "displayName": "Sand", "canonical": "#ece4d5", "tonalRamp": ["#38342c", "#57513f", "#7b735c", "#a29a80", "#c8c0a9", "#e0d8c4", "#ece4d5", "#f5f0e6"] },
+      "line": { "role": "neutral", "displayName": "Line", "canonical": "#ddd3c3", "tonalRamp": ["#332f27", "#4f493c", "#736c5b", "#968e79", "#bab1a0", "#d3c9b8", "#ddd3c3", "#eee8dd"] },
+      "dark": { "role": "neutral", "displayName": "Dark Band", "canonical": "#121110", "tonalRamp": ["#0b0a09", "#121110", "#211f1c", "#3a3733", "#5c5850", "#89847a", "#bcb6aa", "#e6e2d9"] },
+      "dark-soft": { "role": "neutral", "displayName": "Dark Soft", "canonical": "#1b1916", "tonalRamp": ["#0e0d0b", "#1b1916", "#2a2723", "#423e38", "#645f56", "#918b80", "#c0baae", "#e9e5dc"] },
+      "on-dark": { "role": "neutral", "displayName": "On Dark", "canonical": "#f7f3eb", "tonalRamp": ["#3a362f", "#5a554b", "#857e70", "#b3ac9d", "#d5cfc0", "#e9e4d8", "#f7f3eb", "#fdfbf7"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headlines only — on dark bands, paired with outlined ghost text." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings via SectionHeading; text-balance." },
+      "title": { "displayName": "Title", "purpose": "Card titles, modal headings, drawer items — Space Grotesk, tight tracking." },
+      "body": { "displayName": "Body", "purpose": "All body and UI copy in Inter; 15px/1.75 for descriptions, 14px for controls." },
+      "label": { "displayName": "Label", "purpose": "Kickers (0.28em) and card metadata (0.18em) — tracked uppercase plate captions." }
+    },
+    "shadows": [
+      { "name": "accent-glow", "value": "0 12px 30px -14px rgba(232,73,29,0.85)", "purpose": "Constant under primary buttons — the CTA always reads raised." },
+      { "name": "card-lift", "value": "0 24px 60px -36px rgba(23,21,18,0.45)", "purpose": "Studio cards on hover, paired with border darkening to ink/25." },
+      { "name": "overlay", "value": "0 28px 70px -28px rgba(23,21,18,0.45)", "purpose": "Modals, drawers, dropdowns — the heaviest layer." },
+      { "name": "micro", "value": "0 1px 8px rgba(23,21,18,0.28)", "purpose": "Small floating controls and mobile toggles." }
+    ],
+    "motion": [
+      { "name": "state", "value": "200ms ease", "purpose": "Default for color/border state transitions on controls." },
+      { "name": "reveal", "value": "500ms ease-out", "purpose": "Primary button circular-reveal and card hover lift." },
+      { "name": "reduced-motion", "value": "transition-duration: 0.001ms !important", "purpose": "Global override under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "shell", "value": "1280px max-width" },
+      { "name": "shell-wide", "value": "1440px max-width" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Press-red pill with constant glow and circular-reveal hover — the main CTA.",
+      "html": "<button class=\"ds-btn-primary\">Book this studio</button>",
+      "css": ".ds-btn-primary{position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border:none;border-radius:9999px;background:var(--accent,#e8491d);color:#fff;font:500 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;box-shadow:0 12px 30px -14px rgba(232,73,29,.85)}.ds-btn-primary::before{content:\"\";position:absolute;left:50%;top:50%;z-index:-1;width:0;height:0;border-radius:9999px;background:var(--accent-deep,#c53a12);transform:translate(-50%,-50%);transition:width .5s ease-out,height .5s ease-out}.ds-btn-primary::after{content:\"\";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.2));opacity:.3}.ds-btn-primary:hover::before{width:224px;height:224px}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#e8491d);outline-offset:3px}.ds-btn-primary:disabled{opacity:.5;pointer-events:none}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Transparent pill with 1px ink border that darkens and tints on hover.",
+      "html": "<button class=\"ds-btn-outline\">View details</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:9999px;border:1px solid rgba(23,21,18,.2);background:transparent;color:var(--ink,#171512);font:500 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:border-color .2s,background .2s}.ds-btn-outline:hover{border-color:rgba(23,21,18,.5);background:rgba(23,21,18,.04)}.ds-btn-outline:focus-visible{outline:2px solid var(--accent,#e8491d);outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ink-filled pill, ivory text — the quiet strong action.",
+      "html": "<button class=\"ds-btn-secondary\">Save changes</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border:none;border-radius:9999px;background:var(--ink,#171512);color:var(--ivory,#f7f3eb);font:500 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background .2s}.ds-btn-secondary:hover{background:var(--dark-soft,#1b1916)}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent,#e8491d);outline-offset:3px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "48px paper field, 1px line stroke, accent focus ring.",
+      "html": "<input class=\"ds-input\" placeholder=\"Search studios, categories, cities…\">",
+      "css": ".ds-input{height:48px;width:100%;box-sizing:border-box;border-radius:12px;border:1px solid var(--line,#ddd3c3);background:var(--paper,#fffcf6);padding:0 16px;color:var(--ink,#171512);font:400 14px/1.4 Inter,ui-sans-serif,system-ui,sans-serif;transition:border-color .2s,box-shadow .2s}.ds-input::placeholder{color:rgba(111,106,96,.7)}.ds-input:hover{border-color:rgba(23,21,18,.25)}.ds-input:focus{outline:none;border-color:var(--accent,#e8491d);box-shadow:0 0 0 2px rgba(232,73,29,.2)}"
+    },
+    {
+      "name": "Studio Card",
+      "kind": "card",
+      "refersTo": "card-studio",
+      "description": "Signature card: 4:3 image, scrimmed pill badges, grotesk title, stone description, price row.",
+      "html": "<article class=\"ds-card-studio\"><div class=\"ds-card-media\"><span class=\"ds-badge\">Photo Studio</span></div><div class=\"ds-card-body\"><p class=\"ds-card-kicker\">Dhaka, Banani</p><h3 class=\"ds-card-title\">The Daylight Loft</h3><p class=\"ds-card-desc\">Cyc wall, seamless backdrops, and north-facing windows built for image-makers.</p><p class=\"ds-card-price\">৳1,200 <span>/ hour</span></p></div></article>",
+      "css": ".ds-card-studio{display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid rgba(221,211,195,.8);background:var(--paper,#fffcf6);transition:border-color .5s,box-shadow .5s}.ds-card-studio:hover{border-color:rgba(23,21,18,.25);box-shadow:0 24px 60px -36px rgba(23,21,18,.45)}.ds-card-media{position:relative;aspect-ratio:4/3;background:var(--sand,#ece4d5);padding:12px;display:flex;align-items:flex-start;justify-content:flex-start}.ds-card-body{display:flex;flex-direction:column;padding:20px}.ds-card-kicker{font:500 10px/1.4 Inter,ui-sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--stone,#6f6a60)}.ds-card-title{margin:8px 0 0;font:400 20px/1.2 \"Space Grotesk\",Inter,ui-sans-serif;letter-spacing:-.03em;color:var(--ink,#171512)}.ds-card-title:hover{color:var(--accent-deep,#c53a12)}.ds-card-desc{margin:8px 0 0;font:400 14px/1.5 Inter,ui-sans-serif;color:var(--stone,#6f6a60)}.ds-card-price{margin:16px 0 0;font:500 14px/1 Inter,ui-sans-serif;color:var(--ink,#171512)}.ds-card-price span{font-weight:400;color:var(--stone,#6f6a60)}.ds-badge{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:9999px;background:rgba(18,17,16,.78);color:var(--ivory,#f7f3eb);font:500 11px/1 Inter,ui-sans-serif;letter-spacing:.08em;backdrop-filter:blur(4px)}"
+    },
+    {
+      "name": "Section Heading",
+      "kind": "custom",
+      "refersTo": "typography.headline",
+      "description": "Kicker plate-caption over a tight-tracked grotesk headline and stone description.",
+      "html": "<div><p class=\"ds-kicker\">Featured spaces</p><h2 class=\"ds-headline\">Studios creators keep rebooking</h2><p class=\"ds-desc\">Hand-picked spaces with the light, gear, and acoustics your project deserves.</p></div>",
+      "css": ".ds-kicker{font:500 11px/1.4 Inter,ui-sans-serif;letter-spacing:.28em;text-transform:uppercase;color:var(--stone,#6f6a60)}.ds-headline{margin:12px 0 0;font:400 44px/1.05 \"Space Grotesk\",Inter,ui-sans-serif;letter-spacing:-.04em;color:var(--ink,#171512)}.ds-desc{margin:16px 0 0;max-width:42rem;font:400 15px/1.75 Inter,ui-sans-serif;color:var(--stone,#6f6a60)}"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "components",
+      "description": "Pill filter chip: sand at rest, ink fill when active — orange is saved for actions.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-chip is-active\">All</button><button class=\"ds-chip\">Photo Studio</button><button class=\"ds-chip\">Music Suite</button></div>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9999px;border:1px solid var(--line,#ddd3c3);background:var(--sand,#ece4d5);color:var(--ink,#171512);font:500 13px/1 Inter,ui-sans-serif;cursor:pointer;transition:background .2s,border-color .2s,color .2s}.ds-chip:hover{border-color:rgba(23,21,18,.3)}.ds-chip.is-active{background:var(--ink,#171512);border-color:var(--ink,#171512);color:var(--ivory,#f7f3eb)}.ds-chip:focus-visible{outline:2px solid var(--accent,#e8491d);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Print Atelier",
+    "overview": "Srijon Space looks like a working print studio that happens to rent rooms. Surfaces are uncoated paper stock — warm ivory and soft paper white rather than clinical white — structured by honest 1px rules and set in ink, never pure black. Press-red-orange is the only loud voice in the room: the color of a stamp, a booking confirmation, a \"Book now\" you can't miss. A fine grain overlay on dark sections gives every surface the texture of stock rather than glass. The system is editorial in its type and tactile in its controls: Space Grotesk headlines with tight tracking, small letterspaced kickers, pill buttons with a springy circular-reveal hover, and flat bordered cards that lift softly only when touched.",
+    "keyCharacteristics": [
+      "Warm paper palette with a single press-red accent",
+      "Space Grotesk display (tight tracking) over Inter body; script reserved for the wordmark",
+      "Flat, border-structured surfaces; soft directional shadows only on interaction",
+      "Pill controls with circular-reveal hover; 1rem-radius cards",
+      "Grain texture and giant outlined display text on dark feature sections"
+    ],
+    "rules": [
+      { "name": "The One Press Rule", "body": "Press-red is the single accent; it appears only on actions, active states, and the rare highlighted figure. If a second screen element competes with the primary CTA for orange, one of them is wrong.", "section": "colors" },
+      { "name": "The Two-Press Rule", "body": "Space Grotesk sets display, Inter sets everything else, Playwrite sets only the wordmark. No fourth font, no script accents in body content.", "section": "typography" },
+      { "name": "The Flat-At-Rest Rule", "body": "Surfaces are flat at rest; 1px line borders carry all structure. Shadows answer interaction only.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use pill shapes for every interactive control and 1rem rectangles for every container.",
+      "Do structure surfaces with 1px line borders (often at 80% opacity) instead of shadows.",
+      "Do introduce dark sections with .grain texture; alternate paper and dark bands to create depth.",
+      "Do pair every display heading with a .kicker micro-label; keep headings text-balance and body text-pretty.",
+      "Do keep the accent on actions and active booking moments — CTAs, focus, selection, status."
+    ],
+    "donts": [
+      "Don't use pure black or pure white; ink is #171512, paper is #fffcf6.",
+      "Don't introduce a second accent hue or gradient text; orange is the only loud voice.",
+      "Don't shadow a resting surface; depth comes from borders and paper/dark alternation.",
+      "Don't apply positive letter-spacing to Space Grotesk headings — tracking stays negative.",
+      "Don't use the Playwrite script anywhere except the wordmark."
+    ]
+  }
+}
