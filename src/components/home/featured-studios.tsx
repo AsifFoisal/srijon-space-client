@@ -1,46 +1,27 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Studio } from "@/lib/types";
 import { StudioCard } from "@/components/studios/studio-card";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { StudioGridSkeleton } from "@/components/ui/skeleton";
-import { buttonStyles } from "@/components/ui/button";
 
-export function FeaturedStudios() {
-  const [studios, setStudios] = useState<Studio[]>([]);
-  const [loading, setLoading] = useState(true);
+export async function FeaturedStudios() {
+  let studios: Studio[] = [];
 
-  useEffect(() => {
-    let active = true;
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!active) return;
-        const list = Array.isArray(data) ? data : [];
-        setStudios(
-          list.map((studio: Studio) => ({
-            ...studio,
-            hourlyRate: Number(studio.hourlyRate) || 0,
-            securityDeposit: Number(studio.securityDeposit) || 0,
-            capacity: Number(studio.capacity) || 0,
-          })),
-        );
-      })
-      .catch(() => {
-        if (active) setStudios([]);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/studios`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Failed to load featured studios");
+    studios = await response.json();
+    if (!Array.isArray(studios)) throw new Error("Invalid studios data");
+  } catch {
+    return (
+      <p role="status" className="py-16 text-center text-stone">
+        Featured studios are unavailable right now. Please try again later.
+      </p>
+    );
+  }
 
   const featured = [...studios]
     .sort(
@@ -49,6 +30,14 @@ export function FeaturedStudios() {
         new Date(a.createdAt ?? 0).getTime(),
     )
     .slice(0, 6);
+
+  if (featured.length === 0) {
+    return (
+      <p className="py-16 text-center text-stone">
+        New studios are on their way. Check back soon!
+      </p>
+    );
+  }
 
   return (
     <section className="py-20 lg:py-28">
@@ -60,7 +49,7 @@ export function FeaturedStudios() {
           action={
             <Link
               href="/studios"
-              className={buttonStyles({ variant: "outline" })}
+              className="inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full border border-ink/20 bg-transparent px-6 text-sm font-medium text-ink transition-colors duration-200 hover:border-ink/50 hover:bg-ink/[0.04]"
             >
               View all studios
               <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -68,18 +57,12 @@ export function FeaturedStudios() {
           }
         />
 
-        <div className="mt-12">
-          {loading ? (
-            <StudioGridSkeleton count={6} />
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {featured.map((studio, index) => (
-                <div key={studio._id} className="h-full">
-                  <StudioCard studio={studio} priority={index < 3} />
-                </div>
-              ))}
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {featured.map((studio, index) => (
+            <div key={studio._id} className="h-full">
+              <StudioCard studio={studio} priority={index < 3} />
             </div>
-          )}
+          ))}
         </div>
       </div>
     </section>
