@@ -92,6 +92,8 @@ export function StudioForm() {
           body: JSON.stringify({
             ...form,
             amenities: amenities,
+            ownerEmail: user ? user.email : "",
+            ownerName: user ? user.name : "",
           }),
         },
       );

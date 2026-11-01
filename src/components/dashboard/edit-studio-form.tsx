@@ -1,25 +1,28 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/context/auth-context";
-import { useMarketplace } from "@/context/marketplace-context";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
-import type {
-  Amenity,
-  Studio,
-  StudioCategory,
-  StudioDraft,
-} from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
 
+const initialForm = {
+  title: "",
+  category: "",
+  hourlyRate: "",
+  securityDeposit: "",
+  capacity: "",
+  address: "",
+  imageUrl: "",
+  description: "",
+};
+
 interface EditStudioFormProps {
-  mode: "create" | "edit";
-  studio?: Studio;
+  studioId: string;
 }
 
 interface FormSectionProps {
@@ -57,41 +60,55 @@ function FormSection({
   );
 }
 
-export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
+export function EditStudioForm({ studioId }: EditStudioFormProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { addStudio, editStudio } = useMarketplace();
 
-  const [title, setTitle] = useState(studio ? studio.title : "");
-  const [category, setCategory] = useState<StudioCategory>(
-    studio ? studio.category : "Photo Studio",
-  );
-  const [description, setDescription] = useState(
-    studio ? studio.description : "",
-  );
-  const [hourlyRate, setHourlyRate] = useState(
-    studio ? String(studio.hourlyRate) : "",
-  );
-  const [securityDeposit, setSecurityDeposit] = useState(
-    studio ? String(studio.securityDeposit) : "",
-  );
-  const [capacity, setCapacity] = useState(
-    studio ? String(studio.capacity) : "",
-  );
-  const [address, setAddress] = useState(studio ? studio.address : "");
-  const [city, setCity] = useState(studio ? studio.city : "");
-  const [mainImage, setMainImage] = useState(
-    studio ? studio.mainImage : "",
-  );
-  const [gallery, setGallery] = useState(
-    studio ? studio.gallery.join("\n") : "",
-  );
-  const [amenities, setAmenities] = useState<Amenity[]>(
-    studio ? studio.amenities : [],
-  );
+  const [form, setForm] = useState<typeof initialForm | null>(null);
+  const [amenities, setAmenities] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function toggleAmenity(amenity: Amenity) {
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${studioId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data?._id) {
+          toast.error("This studio could not be found.");
+          router.push("/my-listings");
+          return;
+        }
+
+        if (user && data.ownerEmail !== user.email) {
+          toast.error("You can only edit your own listings.");
+          router.push("/my-listings");
+          return;
+        }
+
+        setForm({
+          title: data.title || "",
+          category: data.category || "",
+          hourlyRate: String(data.hourlyRate || ""),
+          securityDeposit: String(data.securityDeposit || ""),
+          capacity: String(data.capacity || ""),
+          address: data.address || "",
+          imageUrl: data.imageUrl || "",
+          description: data.description || "",
+        });
+        setAmenities(Array.isArray(data.amenities) ? data.amenities : []);
+      })
+      .catch(() => {
+        toast.error("This studio could not be found.");
+        router.push("/my-listings");
+      });
+  }, [studioId, user, router]);
+
+  const update = (field: keyof typeof initialForm, value: string) => {
+    setForm((current) =>
+      current ? { ...current, [field]: value } : current,
+    );
+  };
+
+  function toggleAmenity(amenity: string) {
     if (amenities.includes(amenity)) {
       setAmenities(amenities.filter((item) => item !== amenity));
     } else {
@@ -102,58 +119,51 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!user) {
+    if (!form || !user) {
       toast.error("You need to be signed in to manage listings.");
       return;
     }
 
     setIsSubmitting(true);
 
-    const galleryUrls: string[] = [];
-    const galleryLines = gallery.split("\n");
-
-    for (const line of galleryLines) {
-      const url = line.trim();
-
-      if (url !== "") {
-        galleryUrls.push(url);
-      }
-    }
-
-    const draft: StudioDraft = {
-      title: title,
-      category: category,
-      description: description,
-      hourlyRate: Number(hourlyRate),
-      securityDeposit: Number(securityDeposit),
-      capacity: Number(capacity),
-      address: address,
-      city: city,
-      mainImage: mainImage,
-      gallery: galleryUrls,
-      amenities: amenities,
-    };
-
     try {
-      if (mode === "edit" && studio) {
-        await editStudio(studio.id, draft, user);
-        toast.success("Listing updated. Your changes are live.");
-      } else {
-        await addStudio(draft, user);
-        toast.success("Studio added. It's now live in your listings.");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${studioId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            amenities: amenities,
+            ownerEmail: user.email,
+            ownerName: user.name,
+          }),
+        },
+      );
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        toast.error(result?.message || "Failed to update studio.");
+        return;
       }
 
+      toast.success("Studio updated successfully!");
       router.push("/my-listings");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("We couldn't save this listing. Please try again.");
+        toast.error("Something went wrong.");
       }
     } finally {
       setIsSubmitting(false);
     }
   }
+
+  if (!form) return null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -166,17 +176,15 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
           <Input
             label="Studio title"
             placeholder="e.g. The Daylight Loft"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            value={form.title}
+            onChange={(event) => update("title", event.target.value)}
             required
           />
 
           <Select
             label="Category"
-            value={category}
-            onChange={(event) =>
-              setCategory(event.target.value as StudioCategory)
-            }
+            value={form.category}
+            onChange={(event) => update("category", event.target.value)}
             required
           >
             {STUDIO_CATEGORIES.map((option) => (
@@ -190,8 +198,8 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
             label="Detailed overview"
             placeholder="Describe your studio, equipment, lighting, and what makes it special."
             className="min-h-36"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
+            value={form.description}
+            onChange={(event) => update("description", event.target.value)}
             required
           />
         </div>
@@ -208,8 +216,8 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
             type="number"
             min="1"
             placeholder="85"
-            value={hourlyRate}
-            onChange={(event) => setHourlyRate(event.target.value)}
+            value={form.hourlyRate}
+            onChange={(event) => update("hourlyRate", event.target.value)}
             required
           />
 
@@ -218,8 +226,8 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
             type="number"
             min="0"
             placeholder="150"
-            value={securityDeposit}
-            onChange={(event) => setSecurityDeposit(event.target.value)}
+            value={form.securityDeposit}
+            onChange={(event) => update("securityDeposit", event.target.value)}
             required
           />
 
@@ -228,8 +236,8 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
             type="number"
             min="1"
             placeholder="8"
-            value={capacity}
-            onChange={(event) => setCapacity(event.target.value)}
+            value={form.capacity}
+            onChange={(event) => update("capacity", event.target.value)}
             required
           />
         </div>
@@ -237,23 +245,24 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
 
       <FormSection
         index={3}
-        title="Location"
-        description="Let creators know where your studio is located."
+        title="Location & image"
+        description="Add your studio address and a main image URL."
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4">
           <Input
-            label="Full address"
+            label="Location / Address"
             placeholder="64 Wythe Ave, Brooklyn, NY"
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
+            value={form.address}
+            onChange={(event) => update("address", event.target.value)}
             required
           />
 
           <Input
-            label="City or area"
-            placeholder="Brooklyn, NY"
-            value={city}
-            onChange={(event) => setCity(event.target.value)}
+            label="Image URL"
+            type="url"
+            placeholder="https://example.com/studio.jpg"
+            value={form.imageUrl}
+            onChange={(event) => update("imageUrl", event.target.value)}
             required
           />
         </div>
@@ -261,32 +270,6 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
 
       <FormSection
         index={4}
-        title="Studio imagery"
-        description="Add your main studio image and optional gallery images."
-      >
-        <div className="grid gap-4">
-          <Input
-            label="Main image URL"
-            type="url"
-            placeholder="https://example.com/studio.jpg"
-            value={mainImage}
-            onChange={(event) => setMainImage(event.target.value)}
-            required
-          />
-
-          <Textarea
-            label="Gallery image URLs"
-            placeholder={"https://example.com/image1.jpg\nhttps://example.com/image2.jpg"}
-            hint="Add one image URL per line."
-            className="min-h-28"
-            value={gallery}
-            onChange={(event) => setGallery(event.target.value)}
-          />
-        </div>
-      </FormSection>
-
-      <FormSection
-        index={5}
         title="Amenities"
         description="Select all facilities and equipment available in your studio."
       >
@@ -323,16 +306,16 @@ export function EditStudioForm({ mode, studio }: EditStudioFormProps) {
 
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-paper p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-stone">
-          Your studio will be published after successful submission.
+          Your changes will go live after saving.
         </p>
 
         <Button
           type="submit"
           loading={isSubmitting}
-          loadingText={mode === "edit" ? "Saving changes..." : "Adding studio..."}
+          loadingText="Saving changes..."
           disabled={isSubmitting}
         >
-          {mode === "edit" ? "Save Changes" : "Add Studio"}
+          Save Changes
           <ArrowUpRight className="size-4" />
         </Button>
       </div>

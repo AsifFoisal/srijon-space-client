@@ -1,98 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Building2,
-  CalendarCheck,
-  PlusCircle,
-  Star,
-  Trash2,
-  PencilLine,
-} from "lucide-react";
+import { Building2, PencilLine, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import type { Studio } from "@/lib/types";
+
 import { useAuth } from "@/context/auth-context";
-import { useMarketplace } from "@/context/marketplace-context";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ListingStatusBadge } from "@/components/ui/badge";
-import { RatingStars } from "@/components/ui/rating-stars";
-import { StatCard } from "@/components/ui/stat-card";
 import { SmartImage } from "@/components/ui/smart-image";
-import { Skeleton, StatRowSkeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
-import { formatCurrency, getInitials } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
+
+interface StudioListing {
+  _id: string;
+  title: string;
+  category: string;
+  hourlyRate: string | number;
+  capacity: string | number;
+  address: string;
+  imageUrl: string;
+  description: string;
+  amenities?: string[];
+}
 
 function MyListingsContent() {
   const { user } = useAuth();
-  const {
-    isReady,
-    getStudiosFor,
-    getBookingsFor,
-    removeStudio,
-  } = useMarketplace();
-  const [deleteTarget, setDeleteTarget] = useState<Studio | null>(null);
+  const [studios, setStudios] = useState<StudioListing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<StudioListing | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!user) return;
 
-  const listings = getStudiosFor(user.email);
-  const bookings = getBookingsFor(user.email);
-  const activeListings = listings.filter(
-    (studio) => studio.status === "Active",
-  ).length;
-  const listingIds = new Set(listings.map((studio) => studio.id));
-  const listingBookings = bookings.filter((booking) =>
-    listingIds.has(booking.studioId),
-  ).length;
-  const rated = listings.filter((studio) => studio.rating > 0);
-  const averageRating = rated.length
-    ? (
-        rated.reduce((total, studio) => total + studio.rating, 0) /
-        rated.length
-      ).toFixed(1)
-    : "—";
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user?.email}`,
+    )
+      .then((response) => response.json())
+      .then((data) => setStudios(Array.isArray(data) ? data : []))
+      .catch(() => setStudios([]))
+      .finally(() => setLoading(false));
+  }, [user]);
 
   async function handleDelete() {
-    if (!deleteTarget || !user) return;
+    if (!deleteTarget) return;
+
     setDeleting(true);
+
     try {
-      await removeStudio(deleteTarget.id, user);
-      toast.success("Listing deleted. It's no longer visible on the marketplace.");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${deleteTarget._id}`,
+        { method: "DELETE" },
+      );
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(result?.message || "Failed to delete studio.");
+      }
+
+      setStudios((current) =>
+        current.filter((studio) => studio._id !== deleteTarget._id),
+      );
+      toast.success("Studio deleted successfully!");
       setDeleteTarget(null);
     } catch (error) {
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "We couldn't delete this listing. Please try again.",
+        error instanceof Error ? error.message : "Failed to delete studio.",
       );
     } finally {
       setDeleting(false);
     }
   }
 
-  function DeleteButton({ studio }: { studio: Studio }) {
-    return (
-      <button
-        type="button"
-        onClick={() => setDeleteTarget(studio)}
-        className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-accent/30 px-4 text-[13px] font-medium text-accent-deep transition-colors hover:bg-accent-soft"
-      >
-        <Trash2 className="size-3.5" aria-hidden="true" />
-        Delete
-      </button>
-    );
-  }
+  if (!user) return null;
 
   return (
     <div className="shell shell-wide pb-20 pt-28 sm:pt-32">
       <DashboardPageHeader
         kicker="For hosts"
         title="My Studio Listings"
-        description="Manage your creative spaces, update their information, and keep your listings organised."
+        description="The studios you have added to Srijon Space."
         action={
           <Link href="/add-studio" className={buttonStyles()}>
             <PlusCircle className="size-4" aria-hidden="true" />
@@ -102,188 +93,92 @@ function MyListingsContent() {
       />
 
       <div className="mt-8">
-        {!isReady ? (
-          <StatRowSkeleton count={4} />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              label="Total listings"
-              value={listings.length}
-              hint="Spaces you manage"
-              icon={Building2}
-            />
-            <StatCard
-              label="Active listings"
-              value={activeListings}
-              hint="Visible on the marketplace"
-              icon={Building2}
-            />
-            <StatCard
-              label="Total bookings"
-              value={listingBookings}
-              hint="Bookings across your spaces"
-              icon={CalendarCheck}
-            />
-            <StatCard
-              label="Average rating"
-              value={averageRating}
-              hint={`${rated.length} rated listing${rated.length === 1 ? "" : "s"}`}
-              icon={Star}
-            />
+        {loading ? (
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {[0, 1, 2].map((item) => (
+              <div
+                key={item}
+                className="overflow-hidden rounded-2xl border border-line bg-paper"
+              >
+                <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                <div className="space-y-3 p-5">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-
-      <div className="mt-10">
-        {!isReady ? (
-          <div className="overflow-hidden rounded-2xl border border-line bg-paper">
-            <div className="space-y-4 p-5">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-          </div>
-        ) : listings.length === 0 ? (
+        ) : studios.length === 0 ? (
           <EmptyState
             icon={<Building2 className="size-6" aria-hidden="true" />}
             title="You Haven't Listed a Studio Yet."
-            description="Your space could be the one a creator is searching for. Add your first listing and start welcoming bookings."
+            description="Add your first studio and it will appear here."
           >
             <Link href="/add-studio" className={buttonStyles()}>
               <PlusCircle className="size-4" aria-hidden="true" />
               Add Your First Studio
             </Link>
-            <Link href="/dashboard" className={buttonStyles({ variant: "outline" })}>
-              Back to Dashboard
-            </Link>
           </EmptyState>
         ) : (
-          <>
-            <div className="hidden overflow-hidden rounded-2xl border border-line bg-paper md:block">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-ivory/80 text-[10px] uppercase tracking-[0.16em] text-stone">
-                  <tr>
-                    <th className="px-5 py-3.5 font-medium">Listing</th>
-                    <th className="px-4 py-3.5 font-medium">Location</th>
-                    <th className="px-4 py-3.5 font-medium">Rate</th>
-                    <th className="px-4 py-3.5 font-medium">Rating</th>
-                    <th className="px-4 py-3.5 font-medium">Status</th>
-                    <th className="px-5 py-3.5 text-right font-medium">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-line/60">
-                  {listings.map((studio) => (
-                    <tr
-                      key={studio.id}
-                      className="transition-colors hover:bg-ivory/40"
-                    >
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg">
-                            <SmartImage
-                              src={studio.mainImage}
-                              alt={studio.title}
-                              fill
-                              sizes="80px"
-                              className="object-cover"
-                            />
-                          </div>
-                          <div>
-                            <Link
-                              href={`/studios/${studio.id}`}
-                              className="font-medium text-ink transition-colors hover:text-accent-deep"
-                            >
-                              {studio.title}
-                            </Link>
-                            <p className="mt-0.5 text-xs text-stone">
-                              {studio.category}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-stone">
-                        {studio.location}
-                      </td>
-                      <td className="px-4 py-4 text-ink">
-                        {formatCurrency(studio.hourlyRate)}
-                        <span className="text-xs text-stone"> /hr</span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-1.5">
-                          <RatingStars rating={studio.rating} size={11} />
-                          <span className="text-xs text-stone">
-                            {studio.rating > 0
-                              ? studio.rating.toFixed(1)
-                              : "New"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4">
-                        <ListingStatusBadge status={studio.status} />
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/studios/edit/${studio.id}`}
-                            className={buttonStyles({
-                              variant: "outline",
-                              size: "sm",
-                            })}
-                          >
-                            <PencilLine
-                              className="size-3.5"
-                              aria-hidden="true"
-                            />
-                            Update
-                          </Link>
-                          <DeleteButton studio={studio} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {studios.map((studio) => (
+              <article
+                key={studio._id}
+                className="flex flex-col overflow-hidden rounded-2xl border border-line bg-paper"
+              >
+                <div className="relative aspect-[4/3] bg-sand">
+                  <SmartImage
+                    src={studio.imageUrl || ""}
+                    alt={studio.title}
+                    fill
+                    sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
 
-            <div className="space-y-4 md:hidden">
-              {listings.map((studio) => (
-                <article
-                  key={studio.id}
-                  className="rounded-2xl border border-line bg-paper p-4"
-                >
-                  <div className="flex gap-4">
-                    <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-lg">
-                      <SmartImage
-                        src={studio.mainImage}
-                        alt={studio.title}
-                        fill
-                        sizes="112px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <Link
-                        href={`/studios/${studio.id}`}
-                        className="font-display text-lg leading-tight text-ink"
-                      >
-                        {studio.title}
-                      </Link>
-                      <p className="mt-1 text-xs text-stone">
-                        {studio.category} · {studio.location}
-                      </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium text-ink">
-                          {formatCurrency(studio.hourlyRate)}/hr
-                        </span>
-                        <ListingStatusBadge status={studio.status} />
-                      </div>
-                    </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-stone">
+                    {studio.category}
+                  </p>
+
+                  <h2 className="mt-2 font-display text-2xl leading-tight tracking-[-0.03em]">
+                    {studio.title}
+                  </h2>
+
+                  <p className="mt-2 text-sm leading-6 text-stone">
+                    {studio.address}
+                  </p>
+
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-stone">
+                    {studio.description}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-line/70 pt-4 text-sm">
+                    <span className="font-medium text-ink">
+                      {formatCurrency(Number(studio.hourlyRate))}/hr
+                    </span>
+                    <span className="text-stone">
+                      Up to {studio.capacity} guests
+                    </span>
                   </div>
-                  <div className="mt-4 flex gap-2 border-t border-line/70 pt-4">
+
+                  {studio.amenities && studio.amenities.length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {studio.amenities.slice(0, 4).map((amenity) => (
+                        <span
+                          key={amenity}
+                          className="rounded-full bg-sand px-2.5 py-1 text-[11px] text-stone"
+                        >
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="mt-auto flex gap-2 border-t border-line/70 pt-4">
                     <Link
-                      href={`/studios/edit/${studio.id}`}
+                      href={`/studios/edit/${studio._id}`}
                       className={buttonStyles({
                         variant: "outline",
                         size: "sm",
@@ -293,14 +188,24 @@ function MyListingsContent() {
                       <PencilLine className="size-3.5" aria-hidden="true" />
                       Update
                     </Link>
-                    <div className="flex-1">
-                      <DeleteButton studio={studio} />
-                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTarget(studio)}
+                      className={buttonStyles({
+                        variant: "outline",
+                        size: "sm",
+                        className: "flex-1",
+                      })}
+                    >
+                      <Trash2 className="size-3.5" aria-hidden="true" />
+                      Delete
+                    </button>
                   </div>
-                </article>
-              ))}
-            </div>
-          </>
+                </div>
+              </article>
+            ))}
+          </div>
         )}
       </div>
 
@@ -311,14 +216,14 @@ function MyListingsContent() {
         title="Delete This Studio?"
         description="Are you sure you want to delete this listing? This action cannot be undone."
         confirmLabel="Delete Studio"
-        loadingLabel="Deleting…"
+        loadingLabel="Deleting..."
         loading={deleting}
       >
         {deleteTarget ? (
           <div className="flex items-center gap-3">
             <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-sand">
               <SmartImage
-                src={deleteTarget.mainImage}
+                src={deleteTarget.imageUrl || ""}
                 alt={deleteTarget.title}
                 fill
                 sizes="56px"
@@ -330,12 +235,9 @@ function MyListingsContent() {
                 {deleteTarget.title}
               </p>
               <p className="mt-0.5 text-xs text-stone">
-                {deleteTarget.category} · {deleteTarget.location}
+                {deleteTarget.category} · {deleteTarget.address}
               </p>
             </div>
-            <span className="ml-auto flex size-9 shrink-0 items-center justify-center rounded-full bg-sand text-xs font-medium text-stone">
-              {getInitials(deleteTarget.title)}
-            </span>
           </div>
         ) : null}
       </ConfirmModal>
