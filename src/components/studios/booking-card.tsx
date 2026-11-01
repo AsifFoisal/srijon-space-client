@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import type { Studio } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
-import { RatingStars } from "@/components/ui/rating-stars";
 import { BookingModal } from "@/components/studios/booking-modal";
 import { TIME_OPTIONS } from "@/lib/constants";
 import {
@@ -15,77 +14,34 @@ import {
   formatCurrency,
   formatDuration,
   formatTimeLabel,
-  minutesToTime,
-  parseDate,
-  timeToMinutes,
   todayISO,
-  weekdayName,
 } from "@/lib/utils";
-
-function getInitialDate(studio: Studio) {
-  const base = new Date();
-  base.setHours(12, 0, 0, 0);
-
-  for (let offset = 0; offset < 14; offset += 1) {
-    const candidate = new Date(base);
-    candidate.setDate(base.getDate() + offset);
-    if (studio.availableDays.includes(candidate.getDay())) {
-      const timezoneOffset = candidate.getTimezoneOffset() * 60_000;
-      return new Date(candidate.getTime() - timezoneOffset)
-        .toISOString()
-        .slice(0, 10);
-    }
-  }
-
-  return todayISO();
-}
-
-function getInitialTimes(studio: Studio) {
-  const open = timeToMinutes(studio.openTime);
-  const close = timeToMinutes(studio.closeTime);
-  let start = Math.max(open, Math.min(10 * 60, close - 120));
-  if (start + 120 > close) start = open;
-  const end = Math.min(start + 120, close);
-  return { startTime: minutesToTime(start), endTime: minutesToTime(end) };
-}
 
 export function BookingCard({ studio }: { studio: Studio }) {
   const router = useRouter();
   const { user } = useAuth();
-  const initialTimes = getInitialTimes(studio);
-  const [date, setDate] = useState(() => getInitialDate(studio));
-  const [startTime, setStartTime] = useState(initialTimes.startTime);
-  const [endTime, setEndTime] = useState(initialTimes.endTime);
+  const [date, setDate] = useState(todayISO);
+  const [startTime, setStartTime] = useState("10:00");
+  const [endTime, setEndTime] = useState("12:00");
   const [modalOpen, setModalOpen] = useState(false);
 
   const duration = durationInHours(startTime, endTime);
   const subtotal = Math.round(studio.hourlyRate * duration * 100) / 100;
   const total = Math.round((subtotal + studio.securityDeposit) * 100) / 100;
-  const selectedDay = date ? parseDate(date).getDay() : new Date().getDay();
-  const dayAvailable = studio.availableDays.includes(selectedDay);
-  const timeOptions = TIME_OPTIONS.filter(
-    (time) =>
-      timeToMinutes(time) >= timeToMinutes(studio.openTime) &&
-      timeToMinutes(time) <= timeToMinutes(studio.closeTime),
-  );
   const invalidTime = duration <= 0;
-  const disabled = !dayAvailable || invalidTime;
+  const disabled = invalidTime;
 
   function handleBook() {
     if (!user) {
       toast.info("Sign in to book this studio.");
       router.push(
-        `/login?next=${encodeURIComponent(`/studios/${studio.id}`)}`,
+        `/login?next=${encodeURIComponent(`/studios/${studio._id}`)}`,
       );
       return;
     }
 
     if (disabled) {
-      toast.error(
-        !dayAvailable
-          ? "This studio is closed on the selected day. Please pick another date."
-          : "Please choose an end time after your start time.",
-      );
+      toast.error("Please choose an end time after your start time.");
       return;
     }
 
@@ -94,22 +50,12 @@ export function BookingCard({ studio }: { studio: Studio }) {
 
   return (
     <div className="rounded-2xl border border-line bg-paper p-5 shadow-[0_24px_60px_-40px_rgba(23,21,18,0.4)] sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <p>
-          <span className="font-display text-3xl tracking-[-0.04em]">
-            {formatCurrency(studio.hourlyRate)}
-          </span>
-          <span className="text-sm text-stone"> / hour</span>
-        </p>
-        <div className="text-right">
-          <RatingStars rating={studio.rating} size={12} />
-          <p className="mt-1 text-[11px] text-stone">
-            {studio.rating > 0
-              ? `${studio.rating.toFixed(1)} · ${studio.reviewCount} reviews`
-              : "New listing"}
-          </p>
-        </div>
-      </div>
+      <p>
+        <span className="font-display text-3xl tracking-[-0.04em]">
+          {formatCurrency(studio.hourlyRate)}
+        </span>
+        <span className="text-sm text-stone"> / hour</span>
+      </p>
 
       <div className="mt-5 grid grid-cols-2 gap-2.5">
         <label className="col-span-2 block">
@@ -145,7 +91,7 @@ export function BookingCard({ studio }: { studio: Studio }) {
               onChange={(event) => setStartTime(event.target.value)}
               className="h-11 w-full appearance-none rounded-xl border border-line bg-paper pl-9 pr-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
             >
-              {timeOptions.map((time) => (
+              {TIME_OPTIONS.map((time) => (
                 <option key={time} value={time}>
                   {formatTimeLabel(time)}
                 </option>
@@ -168,7 +114,7 @@ export function BookingCard({ studio }: { studio: Studio }) {
               onChange={(event) => setEndTime(event.target.value)}
               className="h-11 w-full appearance-none rounded-xl border border-line bg-paper pl-9 pr-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
             >
-              {timeOptions.map((time) => (
+              {TIME_OPTIONS.map((time) => (
                 <option key={time} value={time}>
                   {formatTimeLabel(time)}
                 </option>
@@ -177,13 +123,6 @@ export function BookingCard({ studio }: { studio: Studio }) {
           </span>
         </label>
       </div>
-
-      {!dayAvailable ? (
-        <p className="mt-3 rounded-lg bg-accent-soft px-3 py-2 text-xs leading-5 text-accent-deep">
-          This studio is usually closed on {weekdayName(selectedDay)}. Pick
-          another date to continue.
-        </p>
-      ) : null}
 
       {invalidTime ? (
         <p className="mt-3 rounded-lg bg-accent-soft px-3 py-2 text-xs leading-5 text-accent-deep">

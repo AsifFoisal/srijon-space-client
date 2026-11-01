@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CalendarCheck,
@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import type { Booking, BookingStatus } from "@/lib/types";
 import { BOOKING_STATUSES } from "@/lib/constants";
 import { useAuth } from "@/context/auth-context";
-import { useMarketplace } from "@/context/marketplace-context";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
@@ -40,39 +39,84 @@ const TABS: Tab[] = ["All", ...BOOKING_STATUSES];
 
 function MyBookingsContent() {
   const { user } = useAuth();
-  const { isReady, getBookingsFor, cancelBooking } = useMarketplace();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (active) setBookings(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (active) setBookings([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
   if (!user) return null;
 
-  const bookings = [...getBookingsFor(user.email)].sort((a, b) =>
-    b.createdAt.localeCompare(a.createdAt),
+  const sorted = [...bookings].sort((a, b) =>
+    (b.createdAt || "").localeCompare(a.createdAt || ""),
   );
-  const pending = bookings.filter((booking) => booking.status === "Pending");
-  const confirmed = bookings.filter(
+  const pending = sorted.filter((booking) => booking.status === "Pending");
+  const confirmed = sorted.filter(
     (booking) => booking.status === "Confirmed",
   );
-  const completed = bookings.filter(
+  const completed = sorted.filter(
     (booking) => booking.status === "Completed",
   );
   const visible =
     tab === "All"
-      ? bookings
-      : bookings.filter((booking) => booking.status === tab);
+      ? sorted
+      : sorted.filter((booking) => booking.status === tab);
 
   function countFor(status: Tab) {
-    if (status === "All") return bookings.length;
-    return bookings.filter((booking) => booking.status === status).length;
+    if (status === "All") return sorted.length;
+    return sorted.filter((booking) => booking.status === status).length;
   }
 
   async function handleCancel() {
     if (!cancelTarget) return;
     setCancelling(true);
     try {
-      await cancelBooking(cancelTarget.id);
-      toast.success("Booking cancelled. The space is available to book again.");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${cancelTarget._id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "Cancelled" }),
+        },
+      );
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(
+          result?.message ||
+            "We couldn't cancel this booking. Please try again.",
+        );
+      }
+      setBookings((current) =>
+        current.map((booking) =>
+          booking._id === cancelTarget._id
+            ? { ...booking, status: "Cancelled" }
+            : booking,
+        ),
+      );
+      toast.success(
+        "Booking cancelled. The space is available to book again.",
+      );
       setCancelTarget(null);
     } catch (error) {
       toast.error(
@@ -99,13 +143,13 @@ function MyBookingsContent() {
       />
 
       <div className="mt-8">
-        {!isReady ? (
+        {loading ? (
           <StatRowSkeleton count={4} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               label="Total bookings"
-              value={bookings.length}
+              value={sorted.length}
               hint="Every request you've made"
               icon={CalendarCheck}
             />
@@ -145,13 +189,13 @@ function MyBookingsContent() {
       </Tabs>
 
       <div className="mt-6">
-        {!isReady ? (
+        {loading ? (
           <div className="space-y-4">
             <BookingCardSkeleton />
             <BookingCardSkeleton />
             <BookingCardSkeleton />
           </div>
-        ) : bookings.length === 0 ? (
+        ) : sorted.length === 0 ? (
           <EmptyState
             icon={<CalendarX2 className="size-6" aria-hidden="true" />}
             title="Your Creative Journey Starts Here."
@@ -182,7 +226,7 @@ function MyBookingsContent() {
           <div className="space-y-4">
             {visible.map((booking) => (
               <article
-                key={booking.id}
+                key={booking._id}
                 className="rounded-2xl border border-line bg-paper p-4 sm:p-5"
               >
                 <div className="flex flex-col gap-4 sm:flex-row">
@@ -206,7 +250,7 @@ function MyBookingsContent() {
                           {booking.category}
                           <span aria-hidden="true">·</span>
                           <MapPin className="size-3" aria-hidden="true" />
-                          {booking.location}
+                          {booking.address}
                         </p>
                         <h3 className="mt-1.5 font-display text-xl leading-tight tracking-[-0.02em]">
                           <Link
@@ -258,8 +302,8 @@ function MyBookingsContent() {
 
                     <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-3">
                       <p className="text-[11px] text-stone">
-                        {booking.id} · {formatCurrency(booking.hourlyRate)}/hr ·
-                        Deposit {formatCurrency(booking.securityDeposit)}
+                        {booking._id} · {formatCurrency(booking.hourlyRate)}/hr
+                        · Deposit {formatCurrency(booking.securityDeposit)}
                       </p>
                       <div className="flex items-center gap-2">
                         {booking.status === "Pending" ? (

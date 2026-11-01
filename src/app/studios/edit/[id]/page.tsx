@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { BASE_STUDIOS } from "@/data/studios";
 import { EditStudioClient } from "./edit-studio-client";
 
 export const metadata: Metadata = {
@@ -7,9 +6,8 @@ export const metadata: Metadata = {
   description: "Update your Srijon Space listing.",
 };
 
-export async function generateStaticParams() {
-  return BASE_STUDIOS.map((studio) => ({ id: studio.id }));
-}
+// Studio ids are dynamic Mongo ObjectIds, so this route renders on demand.
+export const instant = false;
 
 export default async function EditStudioPage({
   params,

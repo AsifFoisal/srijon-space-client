@@ -1,19 +1,52 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { useMarketplace } from "@/context/marketplace-context";
+import type { Studio } from "@/lib/types";
 import { StudioCard } from "@/components/studios/studio-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StudioGridSkeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
 
 export function FeaturedStudios() {
-  const { studios, isReady } = useMarketplace();
+  const [studios, setStudios] = useState<Studio[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!active) return;
+        const list = Array.isArray(data) ? data : [];
+        setStudios(
+          list.map((studio: Studio) => ({
+            ...studio,
+            hourlyRate: Number(studio.hourlyRate) || 0,
+            securityDeposit: Number(studio.securityDeposit) || 0,
+            capacity: Number(studio.capacity) || 0,
+          })),
+        );
+      })
+      .catch(() => {
+        if (active) setStudios([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const featured = [...studios]
     .sort(
       (a, b) =>
-        Number(b.featured) - Number(a.featured) || b.rating - a.rating,
+        new Date(b.createdAt ?? 0).getTime() -
+        new Date(a.createdAt ?? 0).getTime(),
     )
     .slice(0, 6);
 
@@ -36,12 +69,12 @@ export function FeaturedStudios() {
         />
 
         <div className="mt-12">
-          {!isReady ? (
+          {loading ? (
             <StudioGridSkeleton count={6} />
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {featured.map((studio, index) => (
-                <div key={studio.id} className="h-full">
+                <div key={studio._id} className="h-full">
                   <StudioCard studio={studio} priority={index < 3} />
                 </div>
               ))}

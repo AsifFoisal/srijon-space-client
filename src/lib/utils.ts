@@ -60,19 +60,6 @@ export function todayISO() {
   return new Date(now.getTime() - offset).toISOString().slice(0, 10);
 }
 
-export function isValidUrl(value: string) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-export function generateId(prefix = "SS") {
-  return `${prefix}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-}
-
 export function pluralize(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
 }
@@ -84,14 +71,6 @@ export function getInitials(name: string) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
-}
-
-export function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
 
 export const WEEKDAY_NAMES = [

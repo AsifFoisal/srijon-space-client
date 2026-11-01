@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import type { BookingStatus, ListingStatus } from "@/lib/types";
+import type { BookingStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function CategoryBadge({
@@ -78,29 +78,6 @@ export function StatusBadge({
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
         statusStyles[status],
-        className,
-      )}
-    >
-      <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
-      {status}
-    </span>
-  );
-}
-
-export function ListingStatusBadge({
-  status,
-  className,
-}: {
-  status: ListingStatus;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
-        status === "Active"
-          ? "border-ink/15 bg-ink text-ivory"
-          : "border-accent/30 bg-accent-soft text-accent-deep",
         className,
       )}
     >

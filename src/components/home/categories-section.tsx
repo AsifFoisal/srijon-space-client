@@ -1,15 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { STUDIO_CATEGORIES } from "@/lib/constants";
-import { useMarketplace } from "@/context/marketplace-context";
 import { SmartImage } from "@/components/ui/smart-image";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { cn, pluralize } from "@/lib/utils";
 
 export function CategoriesSection() {
-  const { studios } = useMarketplace();
+  const [studios, setStudios] = useState<Array<{ category: string }>>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (active) setStudios(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (active) setStudios([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section

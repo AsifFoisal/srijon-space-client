@@ -1,10 +1,9 @@
-import { Suspense } from "react";
+import { Suspense, cache } from "react";
 import Link from "next/link";
 import { ArrowLeft, Building2, Check, MapPin, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 import type { Studio } from "@/lib/types";
-import { BASE_STUDIOS } from "@/data/studios";
 import { BASE_REVIEWS } from "@/data/reviews";
 import { FALLBACK_AVATAR } from "@/lib/constants";
 import { StudioGallery } from "@/components/studios/gallery";
@@ -13,104 +12,58 @@ import { Avatar } from "@/components/ui/avatar";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { DetailsSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatCurrency, formatDateLabel } from "@/lib/utils";
+import { formatDateLabel } from "@/lib/utils";
 
-interface ApiStudio {
-  _id: string;
-  title?: string;
-  category?: string;
-  hourlyRate?: string | number;
-  securityDeposit?: string | number;
-  capacity?: string | number;
-  address?: string;
-  imageUrl?: string;
-  description?: string;
-  amenities?: string[];
-  ownerEmail?: string;
-  ownerName?: string;
-}
+const getStudio = cache(
+  async (id: string): Promise<Studio | null> => {
+    if (!/^[a-f0-9]{24}$/i.test(id)) return null;
 
-function apiStudioToStudio(data: ApiStudio): Studio {
-  const description = data.description || "";
-  const address = data.address || "";
-  const ownerName = data.ownerName || "Studio Host";
-
-  return {
-    id: data._id,
-    title: data.title || "Untitled Studio",
-    category: (data.category || "Photo Studio") as Studio["category"],
-    hourlyRate: Number(data.hourlyRate) || 0,
-    securityDeposit: Number(data.securityDeposit) || 0,
-    capacity: Number(data.capacity) || 1,
-    location: address,
-    city: address,
-    address: address,
-    shortDescription:
-      description.length > 140
-        ? description.slice(0, 137) + "..."
-        : description,
-    description: description,
-    mainImage: data.imageUrl || "",
-    gallery: data.imageUrl ? [data.imageUrl] : [],
-    amenities: (data.amenities || []) as Studio["amenities"],
-    rating: 0,
-    reviewCount: 0,
-    host: {
-      name: ownerName,
-      email: data.ownerEmail || "",
-      avatar: FALLBACK_AVATAR,
-      memberSince: "2026",
-      verified: false,
-      bio: ownerName + " is a host on Srijon Space.",
-    },
-    ownerEmail: data.ownerEmail || "",
-    status: "Active",
-    featured: false,
-    createdAt: new Date().toISOString(),
-    availableDays: [0, 1, 2, 3, 4, 5, 6],
-    openTime: "08:00",
-    closeTime: "22:00",
-    specs: [
-      { label: "Capacity", value: (data.capacity || 1) + " guests" },
-      { label: "Category", value: data.category || "Studio" },
-      { label: "Location", value: address || "—" },
-    ],
-    squareFeet: 0,
-  };
-}
-
-async function getStudio(id: string): Promise<Studio | null> {
-  if (/^[a-f0-9]{24}$/i.test(id)) {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,
         { cache: "no-store" },
       );
+      if (!response.ok) return null;
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+      if (!data || !data._id) return null;
 
-        if (data && data._id) {
-          return apiStudioToStudio(data);
-        }
-      }
+      return {
+        ...data,
+        _id: String(data._id),
+        hourlyRate: Number(data.hourlyRate) || 0,
+        securityDeposit: Number(data.securityDeposit) || 0,
+        capacity: Number(data.capacity) || 1,
+        amenities: Array.isArray(data.amenities) ? data.amenities : [],
+      } as Studio;
     } catch {
-      // Fall through to the local studio data.
+      return null;
     }
-  }
+  },
+);
 
-  return BASE_STUDIOS.find((studio) => studio.id === id) ?? null;
+// The mock reviews are keyed by slug ids that never match Mongo ObjectIds, so
+// every studio gets a small deterministic slice of them instead.
+function getStudioReviews(id: string) {
+  const seed = Number.parseInt(id.slice(-6), 16) || 0;
+  const start = seed % BASE_REVIEWS.length;
+  const count = 3 + (seed % 4);
+
+  return Array.from(
+    { length: count },
+    (_, index) => BASE_REVIEWS[(start + index) % BASE_REVIEWS.length],
+  );
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/studios/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const studio = BASE_STUDIOS.find((item) => item.id === id);
+  const studio = await getStudio(id);
 
   return {
     title: studio ? studio.title : "Studio",
-    description: studio ? studio.shortDescription : undefined,
+    description: studio ? studio.description : undefined,
   };
 }
 
@@ -135,10 +88,13 @@ async function StudioDetails({ id }: { id: string }) {
     );
   }
 
-  const reviews = BASE_REVIEWS.filter((review) => review.studioId === id);
-  const images = Array.from(
-    new Set([studio.mainImage, ...studio.gallery].filter(Boolean)),
-  );
+  const reviews = getStudioReviews(id);
+  const images = [studio.imageUrl || "/images/studios/daylight-loft.jpg"];
+  const specs = [
+    { label: "Capacity", value: `${studio.capacity} guests` },
+    { label: "Category", value: studio.category },
+    { label: "Location", value: studio.address || "—" },
+  ];
 
   return (
     <main className="pb-20">
@@ -178,7 +134,7 @@ async function StudioDetails({ id }: { id: string }) {
                 Up to {studio.capacity} guests
               </span>
 
-              {studio.rating > 0 ? (
+              {studio.rating && studio.rating > 0 ? (
                 <span className="flex items-center gap-2">
                   <RatingStars rating={studio.rating} size={13} />
                   {studio.rating.toFixed(1)} ({studio.reviewCount} reviews)
@@ -198,8 +154,8 @@ async function StudioDetails({ id }: { id: string }) {
             <h2 className="mt-10 font-display text-2xl tracking-[-0.03em]">
               Specifications
             </h2>
-            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-              {studio.specs.map((spec) => (
+            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+              {specs.map((spec) => (
                 <div key={spec.label} className="bg-paper p-4">
                   <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
                     {spec.label}
@@ -237,24 +193,20 @@ async function StudioDetails({ id }: { id: string }) {
             <h2 className="mt-10 font-display text-2xl tracking-[-0.03em]">
               Your host
             </h2>
-            <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-line bg-paper p-6 sm:flex-row sm:items-start">
+            <div className="mt-5 flex items-center gap-4 rounded-2xl border border-line bg-paper p-6">
               <Avatar
-                src={studio.host.avatar}
-                name={studio.host.name}
+                src={FALLBACK_AVATAR}
+                name={studio.ownerName}
                 size={56}
               />
               <div className="min-w-0">
                 <h3 className="font-display text-xl tracking-[-0.02em]">
-                  {studio.host.name}
+                  {studio.ownerName || "Studio Host"}
                 </h3>
-                <p className="mt-1 text-xs text-stone">
-                  Hosting since {studio.host.memberSince}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-stone">
-                  {studio.host.bio}
-                </p>
-                {studio.host.email ? (
-                  <p className="mt-2 text-xs text-stone">{studio.host.email}</p>
+                {studio.ownerEmail ? (
+                  <p className="mt-1 text-xs text-stone">
+                    {studio.ownerEmail}
+                  </p>
                 ) : null}
               </div>
             </div>

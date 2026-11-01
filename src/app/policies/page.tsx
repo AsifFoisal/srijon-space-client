@@ -5,7 +5,7 @@ import { SUPPORT_EMAIL } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Help, Terms & Privacy",
   description:
-    "Srijon Space help centre, terms and conditions, and privacy information for this demo marketplace.",
+    "Srijon Space help centre, terms and conditions, and privacy information.",
 };
 
 const faqs = [
@@ -17,7 +17,7 @@ const faqs = [
   {
     question: "When is the security deposit charged?",
     answer:
-      "The deposit is shown separately from the hourly rental fee in every booking summary. In this demo no payment is taken; the deposit is displayed to demonstrate transparent pricing.",
+      "The deposit is shown separately from the hourly rental fee in every booking summary. No payment is collected online; the deposit is displayed to keep pricing transparent.",
   },
   {
     question: "Can I cancel a booking?",
@@ -27,7 +27,7 @@ const faqs = [
   {
     question: "How do I contact a host?",
     answer:
-      "Every studio detail page includes a host profile with a Contact Host button. Messages are simulated in this demo, but the flow is ready for a real messaging integration.",
+      "Every studio detail page includes a host profile with the host's contact details, so you can reach out directly before booking.",
   },
   {
     question: "How do I list my own studio?",
@@ -45,9 +45,9 @@ export default function PoliciesPage() {
           Help, Terms &amp; Privacy.
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-stone">
-          Everything you need to know about how Srijon Space works. This is a
-          frontend demonstration project, so bookings, accounts, and payments
-          are simulated and stored locally in your browser.
+          Everything you need to know about how Srijon Space works. Listings and
+          bookings are stored in our database, and accounts are handled through
+          secure sign-in.
         </p>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[220px_1fr]">
@@ -120,15 +120,14 @@ export default function PoliciesPage() {
               </h2>
               <div className="mt-4 space-y-4 text-sm leading-7 text-stone">
                 <p>
-                  Srijon Space is a demonstration marketplace. All listings,
-                  hosts, bookings, reviews, and payments shown in this project
-                  are fictional unless explicitly stated. Nothing on this site
-                  constitutes a real rental agreement.
+                  Srijon Space is a creative-space marketplace. Listings, hosts,
+                  and bookings shown in this project are provided for
+                  demonstration purposes unless explicitly stated. Nothing on
+                  this site constitutes a real rental agreement.
                 </p>
                 <p>
-                  Bookings submitted through the interface create mock records
-                  in your browser&apos;s local storage. No payment is processed,
-                  no reservation is transmitted to a host, and no legal
+                  Bookings submitted through the interface are recorded as
+                  requests in our database. No payment is processed and no legal
                   obligation is created.
                 </p>
                 <p>
@@ -141,7 +140,8 @@ export default function PoliciesPage() {
                 </p>
                 <p>
                   We may update these terms as the platform evolves. Continued
-                  use of the demo constitutes acceptance of the current version.
+                  use of the platform constitutes acceptance of the current
+                  version.
                 </p>
               </div>
             </section>
@@ -152,16 +152,10 @@ export default function PoliciesPage() {
               </h2>
               <div className="mt-4 space-y-4 text-sm leading-7 text-stone">
                 <p>
-                  This demo stores your mock account details, listings,
-                  bookings, favorites, and newsletter subscription in your
-                  browser&apos;s local storage. That data never leaves your
-                  device and is not sent to a server.
-                </p>
-                <p>
-                  You can clear everything by removing the site&apos;s local
-                  storage from your browser settings. Doing so resets the demo
-                  to its seeded state, including the sample listings and
-                  bookings.
+                  Your account details are managed by our authentication
+                  provider, and your listings and bookings are stored in our
+                  database. Your newsletter subscription is kept on your device
+                  in your browser&apos;s local storage.
                 </p>
                 <p>
                   We do not collect analytics, payment details, or precise

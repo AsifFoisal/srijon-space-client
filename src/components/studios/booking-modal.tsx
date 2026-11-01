@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { Studio } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
-import { useMarketplace } from "@/context/marketplace-context";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
@@ -17,8 +16,6 @@ import {
   formatDateLabel,
   formatDuration,
   formatTimeLabel,
-  parseDate,
-  timeToMinutes,
   todayISO,
 } from "@/lib/utils";
 
@@ -42,7 +39,6 @@ export function BookingModal({
   initial: { date: string; startTime: string; endTime: string };
 }) {
   const { user } = useAuth();
-  const { addBooking } = useMarketplace();
 
   const {
     register,
@@ -78,11 +74,6 @@ export function BookingModal({
       : 0;
   const subtotal = Math.round(studio.hourlyRate * duration * 100) / 100;
   const total = Math.round((subtotal + studio.securityDeposit) * 100) / 100;
-  const timeOptions = TIME_OPTIONS.filter(
-    (time) =>
-      timeToMinutes(time) >= timeToMinutes(studio.openTime) &&
-      timeToMinutes(time) <= timeToMinutes(studio.closeTime),
-  );
 
   async function onSubmit(data: BookingFormValues) {
     if (!user) {
@@ -90,18 +81,50 @@ export function BookingModal({
       return;
     }
 
+    const bookingDuration = durationInHours(data.startTime, data.endTime);
+    const bookingSubtotal =
+      Math.round(studio.hourlyRate * bookingDuration * 100) / 100;
+
     try {
-      await addBooking(
-        studio,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/add-booking`,
         {
-          date: data.date,
-          startTime: data.startTime,
-          endTime: data.endTime,
-          attendees: Number(data.attendees),
-          projectDescription: data.projectDescription,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            studioId: studio._id,
+            studioTitle: studio.title,
+            studioImage: studio.imageUrl,
+            category: studio.category,
+            address: studio.address,
+            userEmail: user.email,
+            userName: user.name,
+            date: data.date,
+            startTime: data.startTime,
+            endTime: data.endTime,
+            durationHours: bookingDuration,
+            attendees: Number(data.attendees),
+            projectDescription: data.projectDescription.trim() || undefined,
+            hourlyRate: studio.hourlyRate,
+            subtotal: bookingSubtotal,
+            securityDeposit: studio.securityDeposit,
+            total:
+              Math.round(
+                (bookingSubtotal + studio.securityDeposit) * 100,
+              ) / 100,
+            status: "Pending",
+            createdAt: new Date().toISOString(),
+          }),
         },
-        user,
       );
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(
+          result?.message || "Failed to send your booking request.",
+        );
+      }
+
       toast.success("Booking request sent. Track it in My Bookings.");
       onClose();
     } catch (error) {
@@ -118,7 +141,7 @@ export function BookingModal({
       open={open}
       onClose={onClose}
       title="Book this studio"
-      description={`${studio.title} · ${studio.location}`}
+      description={`${studio.title} · ${studio.address}`}
       size="lg"
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -131,10 +154,6 @@ export function BookingModal({
             containerClassName="sm:col-span-2"
             {...register("date", {
               required: "Choose a booking date.",
-              validate: (value) =>
-                !value ||
-                studio.availableDays.includes(parseDate(value).getDay()) ||
-                "The studio is closed on this day. Please pick another date.",
             })}
           />
 
@@ -148,7 +167,7 @@ export function BookingModal({
                 "Your end time needs to be after your start time.",
             })}
           >
-            {timeOptions.map((time) => (
+            {TIME_OPTIONS.map((time) => (
               <option key={time} value={time}>
                 {formatTimeLabel(time)}
               </option>
@@ -165,7 +184,7 @@ export function BookingModal({
                 "Your end time needs to be after your start time.",
             })}
           >
-            {timeOptions.map((time) => (
+            {TIME_OPTIONS.map((time) => (
               <option key={time} value={time}>
                 {formatTimeLabel(time)}
               </option>
@@ -271,7 +290,7 @@ export function BookingModal({
         </div>
 
         <p className="mt-4 text-xs leading-5 text-stone">
-          No payment is taken in this demo. Your request will appear as{" "}
+          No payment is collected online. Your request will appear as{" "}
           <span className="font-medium text-ink">Pending</span> in My Bookings,
           and the host can confirm availability.
         </p>

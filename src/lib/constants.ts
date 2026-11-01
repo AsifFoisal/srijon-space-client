@@ -1,4 +1,4 @@
-import type { Amenity, AuthUser, BookingStatus, StudioCategory } from "./types";
+import type { Amenity, BookingStatus, StudioCategory } from "./types";
 
 export interface CategoryMeta {
   value: StudioCategory;
@@ -71,19 +71,7 @@ export const TIME_OPTIONS: string[] = (() => {
   return options;
 })();
 
-export const MIN_PRICE = 0;
-export const MAX_PRICE = 300;
-export const STUDIOS_PER_PAGE = 6;
-
-export const DEMO_EMAIL = "maya@srijonspace.com";
-export const DEMO_PASSWORD = "Studio123";
-
-export const DEMO_USER: AuthUser = {
-  name: "Maya Chen",
-  email: DEMO_EMAIL,
-  avatar: "/images/avatars/maya.jpg",
-  memberSince: "March 2023",
-};
+export const STUDIOS_PER_PAGE = 8;
 
 export const FALLBACK_AVATAR = "/images/avatars/reviewer-1.jpg";
 
@@ -101,13 +89,6 @@ export const SORT_OPTIONS = [
   "Price: High to Low",
   "Highest Rated",
 ] as const;
-
-export const RATING_OPTIONS = [
-  { label: "Any rating", value: 0 },
-  { label: "5 stars", value: 5 },
-  { label: "4+ stars", value: 4 },
-  { label: "3+ stars", value: 3 },
-];
 
 export const ABOUT_VALUES = [
   "Photographers",

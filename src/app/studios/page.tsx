@@ -21,9 +21,20 @@ function ExploreFallback() {
       </section>
       <section className="py-10 lg:py-14">
         <div className="shell shell-wide">
-          <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
-            <Skeleton className="hidden h-[560px] w-full rounded-2xl lg:block" />
-            <StudioGridSkeleton count={6} />
+          <div className="flex flex-wrap gap-2 pb-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="h-9 w-28 rounded-full" />
+            ))}
+          </div>
+          <div className="flex items-center justify-between border-b border-line/70 pb-5">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-11 w-44 rounded-full" />
+          </div>
+          <div className="mt-8">
+            <StudioGridSkeleton
+              count={8}
+              className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            />
           </div>
         </div>
       </section>

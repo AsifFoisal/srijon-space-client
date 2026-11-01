@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { readJSON, STORAGE_KEYS, writeJSON } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NEWSLETTER_KEY = "srijonspace:v1:newsletter";
 
 export function NewsletterForm({ className }: { className?: string }) {
   const [email, setEmail] = useState("");
@@ -21,9 +21,17 @@ export function NewsletterForm({ className }: { className?: string }) {
       return;
     }
 
-    const subscribers = readJSON<string[]>(STORAGE_KEYS.newsletter, []);
-    if (!subscribers.includes(value.toLowerCase())) {
-      writeJSON(STORAGE_KEYS.newsletter, [...subscribers, value.toLowerCase()]);
+    try {
+      const raw = window.localStorage.getItem(NEWSLETTER_KEY);
+      const subscribers: string[] = raw ? JSON.parse(raw) : [];
+      if (!subscribers.includes(value.toLowerCase())) {
+        window.localStorage.setItem(
+          NEWSLETTER_KEY,
+          JSON.stringify([...subscribers, value.toLowerCase()]),
+        );
+      }
+    } catch {
+      // Storage can be unavailable (private mode / quota). Subscription still succeeds for the session.
     }
 
     setError("");

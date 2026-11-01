@@ -1,18 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
   Building2,
   CalendarCheck,
   CalendarX2,
+  CheckCircle2,
   Clock3,
-  Heart,
   PlusCircle,
   Search,
 } from "lucide-react";
+import type { Booking, Studio } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
-import { useMarketplace } from "@/context/marketplace-context";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Avatar } from "@/components/ui/avatar";
@@ -56,25 +57,65 @@ const quickActions = [
 
 function DashboardContent() {
   const { user } = useAuth();
-  const {
-    isReady,
-    getStudiosFor,
-    getBookingsFor,
-    favorites,
-  } = useMarketplace();
+  const [listings, setListings] = useState<Studio[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+
+    Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user.email}`).then(
+        (response) => response.json(),
+      ),
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
+      ).then((response) => response.json()),
+    ])
+      .then(([studioData, bookingData]) => {
+        if (!active) return;
+        const studioList = Array.isArray(studioData) ? studioData : [];
+        setListings(
+          studioList.map((studio: Studio) => ({
+            ...studio,
+            hourlyRate: Number(studio.hourlyRate) || 0,
+          })),
+        );
+        setBookings(Array.isArray(bookingData) ? bookingData : []);
+      })
+      .catch(() => {
+        if (active) {
+          setListings([]);
+          setBookings([]);
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   if (!user) return null;
 
-  const listings = getStudiosFor(user.email);
-  const bookings = getBookingsFor(user.email);
   const pending = bookings.filter(
     (booking) => booking.status === "Pending",
   ).length;
+  const completed = bookings.filter(
+    (booking) => booking.status === "Completed",
+  ).length;
   const recentBookings = [...bookings]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""))
     .slice(0, 3);
   const recentListings = [...listings]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt ?? 0).getTime() -
+        new Date(a.createdAt ?? 0).getTime(),
+    )
     .slice(0, 3);
   const firstName = user.name.split(" ")[0];
 
@@ -125,14 +166,11 @@ function DashboardContent() {
           <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-on-dark/70">
             Host
           </span>
-          <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-on-dark/70">
-            {favorites.length} saved
-          </span>
         </div>
       </div>
 
       <div className="mt-6">
-        {!isReady ? (
+        {loading ? (
           <StatRowSkeleton count={4} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -155,10 +193,10 @@ function DashboardContent() {
               icon={Clock3}
             />
             <StatCard
-              label="Saved studios"
-              value={favorites.length}
-              hint="Your shortlist"
-              icon={Heart}
+              label="Completed"
+              value={completed}
+              hint="Finished sessions"
+              icon={CheckCircle2}
             />
           </div>
         )}
@@ -178,7 +216,7 @@ function DashboardContent() {
             </Link>
           </header>
 
-          {!isReady ? (
+          {loading ? (
             <div className="space-y-3 p-5">
               <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
@@ -210,7 +248,7 @@ function DashboardContent() {
             <div className="divide-y divide-line/60">
               {recentBookings.map((booking) => (
                 <Link
-                  key={booking.id}
+                  key={booking._id}
                   href="/my-bookings"
                   className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-ivory/60"
                 >
@@ -253,7 +291,7 @@ function DashboardContent() {
             </Link>
           </header>
 
-          {!isReady ? (
+          {loading ? (
             <div className="space-y-3 p-5">
               <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
@@ -283,13 +321,13 @@ function DashboardContent() {
             <div className="divide-y divide-line/60">
               {recentListings.map((studio) => (
                 <Link
-                  key={studio.id}
-                  href={`/studios/${studio.id}`}
+                  key={studio._id}
+                  href={`/studios/${studio._id}`}
                   className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-ivory/60"
                 >
                   <div className="relative size-16 shrink-0 overflow-hidden rounded-lg">
                     <SmartImage
-                      src={studio.mainImage}
+                      src={studio.imageUrl}
                       alt={studio.title}
                       fill
                       sizes="64px"

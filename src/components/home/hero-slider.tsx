@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -13,7 +13,6 @@ import {
 import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import "swiper/css";
 import "swiper/css/effect-fade";
-import { useMarketplace } from "@/context/marketplace-context";
 import { buttonStyles } from "@/components/ui/button";
 import { SmartImage } from "@/components/ui/smart-image";
 import { cn } from "@/lib/utils";
@@ -64,8 +63,24 @@ const slides: HeroSlide[] = [
 export function HeroSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
-  const { studios, isReady } = useMarketplace();
-  const studioCount = isReady ? studios.length : 12;
+  const [studioCount, setStudioCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (active) setStudioCount(Array.isArray(data) ? data.length : 0);
+      })
+      .catch(() => {
+        if (active) setStudioCount(0);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section
@@ -199,7 +214,7 @@ export function HeroSlider() {
             </div>
 
             <div className="hidden items-center gap-8 text-[11px] uppercase tracking-[0.2em] text-on-dark/50 lg:flex">
-              <span>{studioCount} curated spaces</span>
+              <span>{studioCount ?? "…"} curated spaces</span>
               <span className="h-3 w-px bg-white/15" aria-hidden="true" />
               <span>5 creative categories</span>
               <span className="h-3 w-px bg-white/15" aria-hidden="true" />
