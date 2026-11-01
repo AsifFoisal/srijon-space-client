@@ -49,17 +49,12 @@ function MyBookingsContent() {
     if (!user) return;
 
     const load = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user?.email}`,
-        );
-        const bookings: Booking[] = await res.json();
-        setBookings(Array.isArray(bookings) ? bookings : []);
-      } catch {
-        setBookings([]);
-      } finally {
-        setLoading(false);
-      }
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user?.email}`,
+      ).catch(() => null);
+      const data = res && res.ok ? await res.json().catch(() => null) : null;
+      setBookings(Array.isArray(data) ? data : []);
+      setLoading(false);
     };
 
     load();

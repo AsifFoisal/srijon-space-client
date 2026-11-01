@@ -1,7 +1,6 @@
-import { Suspense, cache } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Building2, Check, MapPin, Users } from "lucide-react";
-import type { Metadata } from "next";
 
 import type { Studio } from "@/lib/types";
 import { BASE_REVIEWS } from "@/data/reviews";
@@ -14,36 +13,28 @@ import { DetailsSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLabel, getMockRating } from "@/lib/utils";
 
-const getStudio = cache(
-  async (id: string): Promise<Studio | null> => {
-    if (!/^[a-f0-9]{24}$/i.test(id)) return null;
+async function getStudio(id: string): Promise<Studio | null> {
+  if (!/^[a-f0-9]{24}$/i.test(id)) return null;
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,
-        { cache: "no-store" },
-      );
-      if (!response.ok) return null;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,
+    { cache: "no-store" },
+  ).catch(() => null);
+  if (!response || !response.ok) return null;
 
-      const data = await response.json();
-      if (!data || !data._id) return null;
+  const data = await response.json();
+  if (!data?._id) return null;
 
-      const mock = getMockRating(id);
-      return {
-        ...data,
-        _id: String(data._id),
-        hourlyRate: Number(data.hourlyRate) || 0,
-        securityDeposit: Number(data.securityDeposit) || 0,
-        capacity: Number(data.capacity) || 1,
-        amenities: Array.isArray(data.amenities) ? data.amenities : [],
-        rating: data.rating ?? mock.rating,
-        reviewCount: data.reviewCount ?? mock.reviewCount,
-      } as Studio;
-    } catch {
-      return null;
-    }
-  },
-);
+  const mock = getMockRating(id);
+  return {
+    ...data,
+    hourlyRate: Number(data.hourlyRate) || 0,
+    securityDeposit: Number(data.securityDeposit) || 0,
+    amenities: Array.isArray(data.amenities) ? data.amenities : [],
+    rating: data.rating ?? mock.rating,
+    reviewCount: data.reviewCount ?? mock.reviewCount,
+  } as Studio;
+}
 
 // The mock reviews are keyed by slug ids that never match Mongo ObjectIds, so
 // every studio gets a small deterministic slice of them instead.
@@ -56,18 +47,6 @@ function getStudioReviews(id: string) {
     { length: count },
     (_, index) => BASE_REVIEWS[(start + index) % BASE_REVIEWS.length],
   );
-}
-
-export async function generateMetadata({
-  params,
-}: PageProps<"/studios/[id]">): Promise<Metadata> {
-  const { id } = await params;
-  const studio = await getStudio(id);
-
-  return {
-    title: studio ? studio.title : "Studio",
-    description: studio ? studio.description : undefined,
-  };
 }
 
 export const instant = false;
