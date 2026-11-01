@@ -14,6 +14,7 @@ import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-
 import "swiper/css";
 import "swiper/css/effect-fade";
 import { buttonStyles } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SmartImage } from "@/components/ui/smart-image";
 import { cn } from "@/lib/utils";
 
@@ -124,24 +125,24 @@ export function HeroSlider() {
                 sizes="100vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/55 to-dark/15" />
+              <div className="absolute inset-0 bg-dark/55" />
               <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-transparent to-dark/25" />
 
-              <div className="relative z-10 flex h-full items-center">
-                <div className="shell shell-wide w-full pt-24">
-                  <div className="max-w-3xl">
-                    <p className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-on-dark/60">
+              <div className="relative z-10 flex h-full items-center justify-center text-center">
+                <div className="shell shell-wide mx-auto w-full pt-24 pb-16">
+                  <div className="mx-auto max-w-3xl">
+                    <p className="flex items-center justify-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-on-dark/60">
                       <span className="h-px w-10 bg-accent" aria-hidden="true" />
                       {slide.kicker}
                     </p>
                     <HeadingTag className="mt-6 text-balance font-display text-[clamp(2.9rem,6.5vw,6.1rem)] font-medium leading-[0.94] tracking-[-0.055em] text-white">
                       {slide.title}
                     </HeadingTag>
-                    <p className="mt-6 max-w-xl text-pretty text-[15px] leading-7 text-on-dark/70 sm:text-base">
+                    <p className="mx-auto mt-6 max-w-xl text-pretty text-[15px] leading-7 text-on-dark/70 sm:text-base">
                       {slide.description}
                     </p>
 
-                    <div className="mt-9 flex flex-wrap items-center gap-3">
+                    <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                       {primaryHref ? (
                         <Link
                           href={primaryHref}
@@ -214,7 +215,11 @@ export function HeroSlider() {
             </div>
 
             <div className="hidden items-center gap-8 text-[11px] uppercase tracking-[0.2em] text-on-dark/50 lg:flex">
-              <span>{studioCount ?? "…"} curated spaces</span>
+              {studioCount === null ? (
+                <Skeleton className="h-3 w-32 bg-white/10" />
+              ) : (
+                <span>{studioCount} curated spaces</span>
+              )}
               <span className="h-3 w-px bg-white/15" aria-hidden="true" />
               <span>5 creative categories</span>
               <span className="h-3 w-px bg-white/15" aria-hidden="true" />

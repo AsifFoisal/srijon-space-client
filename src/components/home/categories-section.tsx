@@ -6,10 +6,13 @@ import { ArrowUpRight } from "lucide-react";
 import { STUDIO_CATEGORIES } from "@/lib/constants";
 import { SmartImage } from "@/components/ui/smart-image";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn, pluralize } from "@/lib/utils";
 
 export function CategoriesSection() {
-  const [studios, setStudios] = useState<Array<{ category: string }>>([]);
+  const [studios, setStudios] = useState<Array<{ category: string }> | null>(
+    null,
+  );
 
   useEffect(() => {
     let active = true;
@@ -28,6 +31,11 @@ export function CategoriesSection() {
     };
   }, []);
 
+  const countFor = (category: string) =>
+    studios === null
+      ? null
+      : studios.filter((studio) => studio.category === category).length;
+
   return (
     <section
       id="categories"
@@ -42,9 +50,7 @@ export function CategoriesSection() {
 
         <div className="mt-11 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
           {STUDIO_CATEGORIES.map((category, index) => {
-            const count = studios.filter(
-              (studio) => studio.category === category.value,
-            ).length;
+            const count = countFor(category.value);
 
             return (
               <div
@@ -85,9 +91,13 @@ export function CategoriesSection() {
                     <p className="mt-1.5 line-clamp-2 max-w-sm text-sm leading-6 text-on-dark/60">
                       {category.description}
                     </p>
-                    <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-on-dark/40">
-                      {pluralize(count, "space")} available
-                    </p>
+                    <div className="mt-4 text-[10px] uppercase tracking-[0.18em] text-on-dark/40">
+                      {count === null ? (
+                        <Skeleton className="h-3 w-24 bg-white/10" />
+                      ) : (
+                        `${pluralize(count, "space")} available`
+                      )}
+                    </div>
                   </div>
                 </Link>
               </div>

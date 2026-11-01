@@ -9,6 +9,7 @@ import { useAuth } from "@/context/auth-context";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { uploadToImgbb } from "@/lib/utils";
 
 const initialForm = {
@@ -194,7 +195,24 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
     }
   }
 
-  if (!form) return null;
+  if (!form) {
+    return (
+      <div className="space-y-6" aria-busy="true" aria-live="polite">
+        {[0, 1, 2, 3].map((section) => (
+          <div
+            key={section}
+            className="rounded-2xl border border-line bg-paper p-6 sm:p-7"
+          >
+            <Skeleton className="h-6 w-44" />
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
