@@ -26,12 +26,13 @@ export function AppPreloader() {
   const showLoader = !done && pathname === "/";
 
   // The intro plays once per browser session. Returning to Home from a
-  // sign-in redirect or a refresh skips straight to the page (runs in a
-  // layout effect so the panel never flashes before the check).
+  // sign-in redirect or a refresh skips straight to the page. A rAF callback
+  // keeps this before the first paint, so the panel never flashes.
   useLayoutEffect(() => {
-    if (pathname === "/" && sessionStorage.getItem("srijon-intro-seen") === "1") {
-      setDone(true);
-    }
+    if (pathname !== "/") return;
+    if (sessionStorage.getItem("srijon-intro-seen") !== "1") return;
+    const frame = requestAnimationFrame(() => setDone(true));
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {

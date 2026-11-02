@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { cn, getInitials } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 /* eslint-disable @next/next/no-img-element */
+
+const FALLBACK_IMAGE = "/images/avatars/fallback-avatar.png";
 
 export function Avatar({
   src,
@@ -11,7 +13,7 @@ export function Avatar({
   size = 40,
   className,
 }: {
-  src?: string;
+  src?: string | null;
   name: string;
   size?: number;
   className?: string;
@@ -20,16 +22,15 @@ export function Avatar({
 
   if (!src || failed) {
     return (
-      <span
-        className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-full bg-ink font-display text-ivory",
-          className,
-        )}
-        style={{ width: size, height: size, fontSize: size * 0.34 }}
-        aria-hidden="true"
-      >
-        {getInitials(name)}
-      </span>
+      <img
+        src={FALLBACK_IMAGE}
+        alt={name}
+        width={size}
+        height={size}
+        className={cn("shrink-0 rounded-full object-cover", className)}
+        style={{ width: size, height: size }}
+        loading="lazy"
+      />
     );
   }
 

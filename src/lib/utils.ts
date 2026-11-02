@@ -64,15 +64,6 @@ export function pluralize(count: number, singular: string, plural = `${singular}
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
-export function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
-
 // Uploads an image file to imgbb and resolves with the hosted URL.
 export async function uploadToImgbb(file: File) {
   const body = new FormData();

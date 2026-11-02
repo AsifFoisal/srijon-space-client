@@ -73,7 +73,7 @@ export const TIME_OPTIONS: string[] = (() => {
 
 export const STUDIOS_PER_PAGE = 8;
 
-export const FALLBACK_AVATAR = "/images/avatars/reviewer-1.jpg";
+export const FALLBACK_AVATAR = "/images/avatars/fallback-avatar.png";
 
 export const BOOKING_STATUSES: BookingStatus[] = [
   "Pending",
