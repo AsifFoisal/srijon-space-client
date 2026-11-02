@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useState,
   type ComponentType,
 } from "react";
@@ -23,6 +24,15 @@ export function AppPreloader() {
     null,
   );
   const showLoader = !done && pathname === "/";
+
+  // The intro plays once per browser session. Returning to Home from a
+  // sign-in redirect or a refresh skips straight to the page (runs in a
+  // layout effect so the panel never flashes before the check).
+  useLayoutEffect(() => {
+    if (pathname === "/" && sessionStorage.getItem("srijon-intro-seen") === "1") {
+      setDone(true);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (!showLoader) return;
@@ -83,7 +93,10 @@ export function AppPreloader() {
       fontWeight={600}
       backgroundColor={PANEL_BACKGROUND}
       fullscreen
-      onComplete={() => setDone(true)}
+      onComplete={() => {
+        sessionStorage.setItem("srijon-intro-seen", "1");
+        setDone(true);
+      }}
     />
   );
 }
