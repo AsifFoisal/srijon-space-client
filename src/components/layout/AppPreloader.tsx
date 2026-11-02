@@ -25,13 +25,18 @@ export function AppPreloader() {
   );
   const showLoader = !done && pathname === "/";
 
-  // The intro plays once per browser session. Returning to Home from a
-  // sign-in redirect or a refresh skips straight to the page. A rAF callback
-  // keeps this before the first paint, so the panel never flashes.
+  // Social sign-in returns Home with ?intro=off so the returning user isn't
+  // greeted by the intro again. The marker is stripped from the URL right
+  // away, and the skip runs in a rAF callback before the first paint.
   useLayoutEffect(() => {
     if (pathname !== "/") return;
-    if (sessionStorage.getItem("srijon-intro-seen") !== "1") return;
-    const frame = requestAnimationFrame(() => setDone(true));
+    if (new URLSearchParams(window.location.search).get("intro") !== "off") {
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      window.history.replaceState(null, "", window.location.pathname);
+      setDone(true);
+    });
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
@@ -94,10 +99,7 @@ export function AppPreloader() {
       fontWeight={600}
       backgroundColor={PANEL_BACKGROUND}
       fullscreen
-      onComplete={() => {
-        sessionStorage.setItem("srijon-intro-seen", "1");
-        setDone(true);
-      }}
+      onComplete={() => setDone(true)}
     />
   );
 }

@@ -149,7 +149,8 @@ export function RegisterForm() {
     try {
       await signIn.social({
         provider: "google",
-        callbackURL: "/",
+        // ?intro=off keeps the home intro from replaying after sign-up.
+        callbackURL: "/?intro=off",
       });
     } catch {
       toast.error("Google sign-in failed");

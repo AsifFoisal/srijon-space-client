@@ -80,7 +80,8 @@ export function LoginForm() {
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
-      await loginWithGoogle(nextPath);
+      // ?intro=off keeps the home intro from replaying after sign-in.
+      await loginWithGoogle(`${nextPath}${nextPath.includes("?") ? "&" : "?"}intro=off`);
     } catch {
       toast.error("Google sign-in is unavailable right now. Try signing in with email.");
       setGoogleLoading(false);
