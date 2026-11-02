@@ -1,9 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { ArrowLeft, Building2, Check, MapPin, Users } from "lucide-react";
 
 import type { Review, Studio } from "@/lib/types";
 import { FALLBACK_AVATAR } from "@/lib/constants";
+import { auth } from "@/lib/auth";
 import { StudioGallery } from "@/components/studios/Gallery";
 import { BookingCard } from "@/components/studios/BookingCard";
 import { ReviewForm } from "@/components/studios/ReviewForm";
@@ -68,6 +71,14 @@ async function getStudioReviews(id: string): Promise<Review[]> {
 export const instant = false;
 
 async function StudioDetails({ id }: { id: string }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  // Guests hitting a studio link land on the login page, then come right
+  // back here after signing in.
+  if (!session) {
+    redirect(`/login?next=${encodeURIComponent(`/studios/${id}`)}`);
+  }
+
   const studio = await getStudio(id);
 
   if (!studio) {
