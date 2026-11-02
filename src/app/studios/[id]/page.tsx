@@ -2,18 +2,16 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Building2, Check, MapPin, Users } from "lucide-react";
 
-import type { Studio } from "@/lib/types";
-import { BASE_REVIEWS } from "@/data/reviews";
+import type { Review, Studio } from "@/lib/types";
 import { FALLBACK_AVATAR } from "@/lib/constants";
 import { StudioGallery } from "@/components/studios/gallery";
 import { BookingCard } from "@/components/studios/booking-card";
+import { ReviewForm } from "@/components/studios/review-form";
 import { Avatar } from "@/components/ui/avatar";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { DetailsSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatDateLabel, getMockRating } from "@/lib/utils";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { formatDateLabel } from "@/lib/utils";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 async function getStudio(id: string): Promise<Studio | null> {
@@ -34,28 +32,37 @@ async function getStudio(id: string): Promise<Studio | null> {
   const data = await response.json();
   if (!data?._id) return null;
 
-  const mock = getMockRating(id);
   return {
     ...data,
     hourlyRate: Number(data.hourlyRate) || 0,
     securityDeposit: Number(data.securityDeposit) || 0,
     amenities: Array.isArray(data.amenities) ? data.amenities : [],
-    rating: data.rating ?? mock.rating,
-    reviewCount: data.reviewCount ?? mock.reviewCount,
   } as Studio;
 }
 
-// The mock reviews are keyed by slug ids that never match Mongo ObjectIds, so
-// every studio gets a small deterministic slice of them instead.
-function getStudioReviews(id: string) {
-  const seed = Number.parseInt(id.slice(-6), 16) || 0;
-  const start = seed % BASE_REVIEWS.length;
-  const count = 3 + (seed % 4);
+async function getStudioReviews(id: string): Promise<Review[]> {
+  const token = await getTokenFromServer();
 
-  return Array.from(
-    { length: count },
-    (_, index) => BASE_REVIEWS[(start + index) % BASE_REVIEWS.length],
-  );
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/studios/${id}/reviews`,{
+      cache: "no-store",
+      headers:{
+        authorization: `Bearer ${token}`,
+      }
+    },
+  ).catch(() => null);
+  if (!response || !response.ok) return [];
+
+  const data = await response.json();
+  return (Array.isArray(data) ? data : []).map((review) => ({
+    id: String(review._id),
+    studioId: id,
+    name: review.name ?? "",
+    avatar: review.avatar || FALLBACK_AVATAR,
+    rating: Number(review.rating),
+    date: review.createdAt ?? "",
+    text: review.text ?? "",
+  }));
 }
 
 export const instant = false;
@@ -79,7 +86,7 @@ async function StudioDetails({ id }: { id: string }) {
     );
   }
 
-  const reviews = getStudioReviews(id);
+  const reviews = await getStudioReviews(id);
   const images =
     studio.images && studio.images.length
       ? studio.images
@@ -208,6 +215,7 @@ async function StudioDetails({ id }: { id: string }) {
             <h2 className="mt-10 font-display text-2xl tracking-[-0.03em]">
               Reviews
             </h2>
+            <ReviewForm studioId={studio._id} />
             {reviews.length === 0 ? (
               <div className="mt-5 rounded-2xl border border-dashed border-line bg-paper/70 px-6 py-10 text-center">
                 <p className="font-display text-xl">No reviews yet.</p>

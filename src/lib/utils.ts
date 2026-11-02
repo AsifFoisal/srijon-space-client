@@ -73,16 +73,6 @@ export function getInitials(name: string) {
     .join("");
 }
 
-// Placeholder ratings until real ones exist in the database — deterministic
-// per studio, so the same listing always shows the same score.
-export function getMockRating(id: string) {
-  const seed = Number.parseInt(id.slice(-6), 16) || 0;
-  return {
-    rating: Math.round((4.3 + (seed % 7) / 10) * 10) / 10,
-    reviewCount: 6 + (seed % 40),
-  };
-}
-
 // Uploads an image file to imgbb and resolves with the hosted URL.
 export async function uploadToImgbb(file: File) {
   const body = new FormData();

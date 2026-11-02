@@ -15,6 +15,7 @@ import type { Booking, Studio } from "@/lib/types";
 import { auth } from "@/lib/auth";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
+import { HostBookings } from "@/components/dashboard/host-bookings";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/badge";
 import { StatCard } from "@/components/ui/stat-card";
@@ -57,16 +58,21 @@ const quickActions = [
 async function getDashboardData(email: string) {
   const token = await getTokenFromServer();
 
-  const [studiosResponse, bookingsResponse] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-studios/${email}`, {
-      cache: "no-store",
-      headers: { authorization: `Bearer ${token}` },
-    }).catch(() => null),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${email}`, {
-      cache: "no-store",
-      headers: { authorization: `Bearer ${token}` },
-    }).catch(() => null),
-  ]);
+  const [studiosResponse, bookingsResponse, hostBookingsResponse] =
+    await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-studios/${email}`, {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${token}` },
+      }).catch(() => null),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${email}`, {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${token}` },
+      }).catch(() => null),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/host-bookings/${email}`, {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${token}` },
+      }).catch(() => null),
+    ]);
 
   const studiosData =
     studiosResponse && studiosResponse.ok
@@ -75,6 +81,10 @@ async function getDashboardData(email: string) {
   const bookingsData =
     bookingsResponse && bookingsResponse.ok
       ? await bookingsResponse.json().catch(() => null)
+      : null;
+  const hostBookingsData =
+    hostBookingsResponse && hostBookingsResponse.ok
+      ? await hostBookingsResponse.json().catch(() => null)
       : null;
 
   const studios: Studio[] = (
@@ -87,6 +97,9 @@ async function getDashboardData(email: string) {
   return {
     studios,
     bookings: Array.isArray(bookingsData) ? (bookingsData as Booking[]) : [],
+    hostBookings: Array.isArray(hostBookingsData)
+      ? (hostBookingsData as Booking[])
+      : [],
   };
 }
 
@@ -96,7 +109,9 @@ async function DashboardContent() {
   if (!session) return null;
 
   const user = session.user;
-  const { studios: listings, bookings } = await getDashboardData(user.email);
+  const { studios: listings, bookings, hostBookings } = await getDashboardData(
+    user.email,
+  );
 
   const pending = bookings.filter(
     (booking) => booking.status === "Pending",
@@ -337,6 +352,8 @@ async function DashboardContent() {
           )}
         </section>
       </div>
+
+      <HostBookings bookings={hostBookings} />
 
       <section className="mt-10">
         <h2 className="font-display text-lg tracking-[-0.02em]">

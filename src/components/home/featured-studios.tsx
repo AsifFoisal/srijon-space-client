@@ -4,7 +4,6 @@ import type { Studio } from "@/lib/types";
 import { StudioCard } from "@/components/studios/studio-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
-import { getMockRating } from "@/lib/utils";
 
 export async function FeaturedStudios() {
   let studios: Studio[] = [];
@@ -36,15 +35,7 @@ export async function FeaturedStudios() {
         new Date(b.createdAt ?? 0).getTime() -
         new Date(a.createdAt ?? 0).getTime(),
     )
-    .slice(0, 6)
-    .map((studio) => {
-      const mock = getMockRating(studio._id);
-      return {
-        ...studio,
-        rating: studio.rating ?? mock.rating,
-        reviewCount: studio.reviewCount ?? mock.reviewCount,
-      };
-    });
+    .slice(0, 6);
 
   if (featured.length === 0) {
     return (
