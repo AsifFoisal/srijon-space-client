@@ -52,7 +52,7 @@ export function AuthShell({
           <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/35 to-dark/10" />
 
           <span className="absolute right-8 top-8 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-on-dark/80 backdrop-blur">
-            12 curated spaces · New York
+            12 curated spaces · Dhaka
           </span>
 
           <div className="absolute inset-x-0 bottom-0 p-10 xl:p-14">

@@ -170,7 +170,7 @@ export function Footer() {
             </div>
 
             <p className="mt-10 font-display text-[13px] uppercase tracking-[0.22em] text-on-dark/30">
-              New York · Est. 2021
+              Dhaka · Est. 2021
             </p>
           </div>
 

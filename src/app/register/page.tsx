@@ -15,7 +15,7 @@ export default function RegisterPage() {
       imageAlt="A creative team collaborating in a studio"
       kicker="A community of makers"
       quote="Good spaces bring good people together. That's the whole idea."
-      caption="Srijon Space community · New York"
+      caption="Srijon Space community · Dhaka"
     >
       <RegisterForm />
     </AuthShell>

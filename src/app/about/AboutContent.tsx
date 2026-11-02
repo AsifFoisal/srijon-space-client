@@ -67,7 +67,7 @@ export function AboutContent() {
             <div>
               <p className="text-pretty text-[15px] leading-7 text-stone">
                 Srijon Space connects creators with professional creative
-                environments across New York — from daylight photo lofts and
+                environments across Bangladesh — from daylight photo lofts and
                 broadcast stages to podcast rooms, music suites, and art
                 workshops.
               </p>

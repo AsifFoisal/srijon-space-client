@@ -261,7 +261,7 @@ export function StudioForm() {
         <div className="grid gap-4">
           <Input
             label="Location / Address"
-            placeholder="64 Wythe Ave, Brooklyn, NY"
+            placeholder="House 12, Road 9, Dhanmondi, Dhaka"
             value={form.address}
             onChange={(event) => update("address", event.target.value)}
             required
