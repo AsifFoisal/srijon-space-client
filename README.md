@@ -1,6 +1,6 @@
 # Srijon Space — Creative studios, ready to book
 
-**Live site:** https://srijon-space-client.vercel.app
+**Live site:** [srijon-space-ochre.vercel.app](https://srijon-space-ochre.vercel.app)
 
 Srijon Space is a peer-to-peer marketplace for creative studio rentals — photo studios, film stages, podcast lounges, music suites, and art workshops. Creators browse and book spaces by the hour; hosts list and manage their own studios with full control over incoming bookings.
 

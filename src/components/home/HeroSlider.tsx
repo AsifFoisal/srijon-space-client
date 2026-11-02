@@ -147,6 +147,7 @@ export function HeroSlider() {
                     <p className="flex items-center justify-center gap-3 text-[11px] font-medium uppercase tracking-[0.3em] text-on-dark/60">
                       <span className="h-px w-10 bg-accent" aria-hidden="true" />
                       {slide.kicker}
+                      <span className="h-px w-10 bg-accent" aria-hidden="true" />
                     </p>
                     <HeadingTag className="mt-6 text-balance font-display text-[clamp(2.9rem,6.5vw,6.1rem)] font-medium leading-[0.94] tracking-[-0.055em] text-white">
                       {slide.title}
