@@ -1,7 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
+import { headers } from "next/headers";
 import {
   ArrowUpRight,
   Building2,
@@ -13,8 +12,8 @@ import {
   Search,
 } from "lucide-react";
 import type { Booking, Studio } from "@/lib/types";
-import { useAuth } from "@/context/auth-context";
-import { RequireAuth } from "@/components/auth/require-auth";
+import { auth } from "@/lib/auth";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/badge";
@@ -55,51 +54,49 @@ const quickActions = [
   },
 ];
 
-function DashboardContent() {
-  const { user } = useAuth();
-  const [listings, setListings] = useState<Studio[]>([]);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+async function getDashboardData(email: string) {
+  const token = await getTokenFromServer();
 
-  useEffect(() => {
-    if (!user) return;
-    let active = true;
+  const [studiosResponse, bookingsResponse] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-studios/${email}`, {
+      cache: "no-store",
+      headers: { authorization: `Bearer ${token}` },
+    }).catch(() => null),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${email}`, {
+      cache: "no-store",
+      headers: { authorization: `Bearer ${token}` },
+    }).catch(() => null),
+  ]);
 
-    Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user.email}`).then(
-        (response) => response.json(),
-      ),
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
-      ).then((response) => response.json()),
-    ])
-      .then(([studioData, bookingData]) => {
-        if (!active) return;
-        const studioList = Array.isArray(studioData) ? studioData : [];
-        setListings(
-          studioList.map((studio: Studio) => ({
-            ...studio,
-            hourlyRate: Number(studio.hourlyRate) || 0,
-          })),
-        );
-        setBookings(Array.isArray(bookingData) ? bookingData : []);
-      })
-      .catch(() => {
-        if (active) {
-          setListings([]);
-          setBookings([]);
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+  const studiosData =
+    studiosResponse && studiosResponse.ok
+      ? await studiosResponse.json().catch(() => null)
+      : null;
+  const bookingsData =
+    bookingsResponse && bookingsResponse.ok
+      ? await bookingsResponse.json().catch(() => null)
+      : null;
 
-    return () => {
-      active = false;
-    };
-  }, [user]);
+  const studios: Studio[] = (
+    Array.isArray(studiosData) ? studiosData : []
+  ).map((studio: Studio) => ({
+    ...studio,
+    hourlyRate: Number(studio.hourlyRate) || 0,
+  }));
 
-  if (!user) return null;
+  return {
+    studios,
+    bookings: Array.isArray(bookingsData) ? (bookingsData as Booking[]) : [],
+  };
+}
+
+async function DashboardContent() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) return null;
+
+  const user = session.user;
+  const { studios: listings, bookings } = await getDashboardData(user.email);
 
   const pending = bookings.filter(
     (booking) => booking.status === "Pending",
@@ -120,7 +117,7 @@ function DashboardContent() {
   const firstName = user.name.split(" ")[0];
 
   return (
-    <div className="shell shell-wide pb-20 pt-28 sm:pt-32">
+    <>
       <DashboardPageHeader
         kicker="Your dashboard"
         title={`Good to see you, ${firstName}.`}
@@ -144,7 +141,7 @@ function DashboardContent() {
       <div className="mt-8 flex flex-col gap-5 rounded-2xl bg-dark p-6 text-on-dark sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <div className="flex items-center gap-4">
           <Avatar
-            src={user.avatar}
+            src={user.image || undefined}
             name={user.name}
             size={64}
             className="border-2 border-white/15"
@@ -155,7 +152,11 @@ function DashboardContent() {
             </p>
             <p className="text-sm text-on-dark/55">{user.email}</p>
             <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-on-dark/35">
-              Member since {user.memberSince}
+              Member since{" "}
+              {new Date(user.createdAt).toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </p>
           </div>
         </div>
@@ -170,36 +171,32 @@ function DashboardContent() {
       </div>
 
       <div className="mt-6">
-        {loading ? (
-          <StatRowSkeleton count={4} />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              label="Total listings"
-              value={listings.length}
-              hint="Spaces you manage"
-              icon={Building2}
-            />
-            <StatCard
-              label="Total bookings"
-              value={bookings.length}
-              hint="Across all statuses"
-              icon={CalendarCheck}
-            />
-            <StatCard
-              label="Pending requests"
-              value={pending}
-              hint="Awaiting confirmation"
-              icon={Clock3}
-            />
-            <StatCard
-              label="Completed"
-              value={completed}
-              hint="Finished sessions"
-              icon={CheckCircle2}
-            />
-          </div>
-        )}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label="Total listings"
+            value={listings.length}
+            hint="Spaces you manage"
+            icon={Building2}
+          />
+          <StatCard
+            label="Total bookings"
+            value={bookings.length}
+            hint="Across all statuses"
+            icon={CalendarCheck}
+          />
+          <StatCard
+            label="Pending requests"
+            value={pending}
+            hint="Awaiting confirmation"
+            icon={Clock3}
+          />
+          <StatCard
+            label="Completed"
+            value={completed}
+            hint="Finished sessions"
+            icon={CheckCircle2}
+          />
+        </div>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -216,13 +213,7 @@ function DashboardContent() {
             </Link>
           </header>
 
-          {loading ? (
-            <div className="space-y-3 p-5">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-          ) : recentBookings.length === 0 ? (
+          {recentBookings.length === 0 ? (
             <div className="flex flex-col items-center px-6 py-12 text-center">
               <CalendarX2
                 className="size-7 text-stone"
@@ -291,13 +282,7 @@ function DashboardContent() {
             </Link>
           </header>
 
-          {loading ? (
-            <div className="space-y-3 p-5">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-          ) : recentListings.length === 0 ? (
+          {recentListings.length === 0 ? (
             <div className="flex flex-col items-center px-6 py-12 text-center">
               <Building2 className="size-7 text-stone" aria-hidden="true" />
               <p className="mt-3 font-medium text-ink">
@@ -383,14 +368,38 @@ function DashboardContent() {
           ))}
         </div>
       </section>
-    </div>
+    </>
   );
 }
 
 export default function DashboardPage() {
   return (
-    <RequireAuth>
-      <DashboardContent />
-    </RequireAuth>
+    <div className="shell shell-wide pb-20 pt-28 sm:pt-32">
+      <Suspense
+        fallback={
+          <>
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="mt-4 h-12 w-full max-w-xl" />
+            <div className="mt-8">
+              <StatRowSkeleton count={4} />
+            </div>
+            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+              <div className="space-y-3 rounded-2xl border border-line bg-paper p-5">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+              <div className="space-y-3 rounded-2xl border border-line bg-paper p-5">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+            </div>
+          </>
+        }
+      >
+        <DashboardContent />
+      </Suspense>
+    </div>
   );
 }

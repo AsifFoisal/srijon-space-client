@@ -14,19 +14,18 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLabel, getMockRating } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 async function getStudio(id: string): Promise<Studio | null> {
   if (!/^[a-f0-9]{24}$/i.test(id)) return null;
 
-  const jwtToken = await auth.api.getToken({
-    headers: await headers(),
-  });
+  const token = await getTokenFromServer();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`,{
+    `${process.env.NEXT_PUBLIC_API_URL}/studios/${id}`,{
       cache: "no-store",
       headers:{
-        authorization: jwtToken?.token,
+        authorization: `Bearer ${token}`,
       }
     },
   ).catch(() => null);

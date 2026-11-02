@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/layout/logo";
 import { ProfileDropdown } from "@/components/layout/profile-dropdown";
 import { ModeToggle } from "@/components/ui/mode-toggle";

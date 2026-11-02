@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { ArrowUpRight, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/hooks/use-auth";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
 import { uploadToImgbb } from "@/lib/utils";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const initialForm = {
   title: "",
@@ -103,6 +104,8 @@ export function StudioForm() {
 
     const images = imageUrls.map((url) => url.trim()).filter(Boolean);
 
+    const token = await getTokenFromClient()
+
     try {
 
       const response = await fetch(
@@ -111,6 +114,7 @@ export function StudioForm() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
             ...form,

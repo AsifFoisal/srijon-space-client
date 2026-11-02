@@ -19,9 +19,8 @@ import {
 import { StudioCard } from "@/components/studios/studio-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
-import { Skeleton, StudioGridSkeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
-import { cn, getMockRating } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const CATEGORY_OPTIONS: (StudioCategory | "All Categories")[] = [
   "All Categories",
@@ -34,52 +33,16 @@ function isCategory(value: string | null): value is StudioCategory {
   return Boolean(value && (CATEGORY_VALUES as string[]).includes(value));
 }
 
-export function ExploreClient() {
+export function ExploreClient({ studios }: { studios: Studio[] }) {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
 
-  const [studios, setStudios] = useState<Studio[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<StudioCategory | "All Categories">(
     "All Categories",
   );
   const [sortOrder, setSortOrder] = useState("Recommended");
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!active) return;
-        const list = Array.isArray(data) ? data : [];
-        setStudios(
-          list.map((studio: Studio) => {
-            const mock = getMockRating(studio._id);
-            return {
-              ...studio,
-              hourlyRate: Number(studio.hourlyRate) || 0,
-              securityDeposit: Number(studio.securityDeposit) || 0,
-              capacity: Number(studio.capacity) || 0,
-              rating: studio.rating ?? mock.rating,
-              reviewCount: studio.reviewCount ?? mock.reviewCount,
-            };
-          }),
-        );
-      })
-      .catch(() => {
-        if (active) setStudios([]);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!isCategory(categoryParam)) return;
@@ -208,7 +171,7 @@ export function ExploreClient() {
             </div>
             <p className="text-sm text-on-dark/50">
               <span className="font-display text-3xl text-white">
-                {loading ? "…" : studios.length}
+                {studios.length}
               </span>{" "}
               spaces available
             </p>
@@ -273,14 +236,8 @@ export function ExploreClient() {
 
           <div className="flex flex-col gap-4 border-b border-line/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="font-display text-lg tracking-[-0.02em]">
-              {loading ? (
-                <Skeleton className="h-6 w-40" />
-              ) : (
-                <>
-                  {filtered.length} space
-                  {filtered.length === 1 ? "" : "s"} found
-                </>
-              )}
+              {filtered.length} space
+              {filtered.length === 1 ? "" : "s"} found
             </div>
 
             <div className="flex items-center gap-3">
@@ -316,9 +273,7 @@ export function ExploreClient() {
           </div>
 
           <div className="mt-8">
-            {loading ? (
-              <StudioGridSkeleton count={8} className={RESULTS_GRID} />
-            ) : visible.length === 0 ? (
+            {visible.length === 0 ? (
               <EmptyState
                 icon={<SearchX className="size-6" aria-hidden="true" />}
                 title="No Spaces Found."

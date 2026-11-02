@@ -3,15 +3,21 @@ import { ArrowUpRight } from "lucide-react";
 import type { Studio } from "@/lib/types";
 import { StudioCard } from "@/components/studios/studio-card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 import { getMockRating } from "@/lib/utils";
 
 export async function FeaturedStudios() {
   let studios: Studio[] = [];
 
   try {
+    const token = await getTokenFromServer();
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/studios?limit=6`,
-      { cache: "no-store" },
+      {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${token}` },
+      },
     );
     if (!response.ok) throw new Error("Failed to load featured studios");
     studios = await response.json();

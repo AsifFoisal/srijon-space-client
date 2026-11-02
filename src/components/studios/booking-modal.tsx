@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import type { Studio } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
@@ -70,10 +71,13 @@ const BookingModal = ({
     setIsSubmitting(true);
 
     try {
+      const token = await getTokenFromClient();
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });

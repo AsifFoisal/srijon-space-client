@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { ExploreClient } from "./explore-client";
+import type { Studio } from "@/lib/types";
 import { Skeleton, StudioGridSkeleton } from "@/components/ui/skeleton";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { getMockRating } from "@/lib/utils";
 
 export const metadata = {
   title: "Explore Studios",
@@ -42,10 +45,40 @@ function ExploreFallback() {
   );
 }
 
+async function getStudios(): Promise<Studio[]> {
+  const token = await getTokenFromServer();
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`, {
+    cache: "no-store",
+    headers: { authorization: `Bearer ${token}` },
+  }).catch(() => null);
+  if (!response || !response.ok) return [];
+
+  const data = await response.json();
+
+  return (Array.isArray(data) ? data : []).map((studio: Studio) => {
+    const mock = getMockRating(studio._id);
+    return {
+      ...studio,
+      hourlyRate: Number(studio.hourlyRate) || 0,
+      securityDeposit: Number(studio.securityDeposit) || 0,
+      capacity: Number(studio.capacity) || 0,
+      rating: studio.rating ?? mock.rating,
+      reviewCount: studio.reviewCount ?? mock.reviewCount,
+    };
+  });
+}
+
+async function ExploreSection() {
+  const studios = await getStudios();
+
+  return <ExploreClient studios={studios} />;
+}
+
 export default function StudiosPage() {
   return (
     <Suspense fallback={<ExploreFallback />}>
-      <ExploreClient />
+      <ExploreSection />
     </Suspense>
   );
 }

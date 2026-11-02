@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { useAuth } from "@/context/auth-context";
 import { AMENITIES, STUDIO_CATEGORIES } from "@/lib/constants";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { uploadToImgbb } from "@/lib/utils";
+import type { Studio } from "@/lib/types";
 
 const initialForm = {
   title: "",
@@ -24,6 +24,7 @@ const initialForm = {
 
 interface EditStudioFormProps {
   studioId: string;
+  studio: Studio;
 }
 
 interface FormSectionProps {
@@ -61,13 +62,28 @@ function FormSection({
   );
 }
 
-export function EditStudioForm({ studioId }: EditStudioFormProps) {
+export function EditStudioForm({ studioId, studio }: EditStudioFormProps) {
   const router = useRouter();
-  const { user } = useAuth();
 
-  const [form, setForm] = useState<typeof initialForm | null>(null);
-  const [imageUrls, setImageUrls] = useState<string[]>([""]);
-  const [amenities, setAmenities] = useState<string[]>([]);
+  const [form, setForm] = useState({
+    title: studio.title || "",
+    category: studio.category || "",
+    hourlyRate: String(studio.hourlyRate || ""),
+    securityDeposit: String(studio.securityDeposit || ""),
+    capacity: String(studio.capacity || ""),
+    address: studio.address || "",
+    description: studio.description || "",
+  });
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    Array.isArray(studio.images) && studio.images.length
+      ? studio.images
+      : studio.imageUrl
+        ? [studio.imageUrl]
+        : [""],
+  );
+  const [amenities, setAmenities] = useState<string[]>(
+    Array.isArray(studio.amenities) ? studio.amenities : [],
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -90,50 +106,8 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
     }
   }
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${studioId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data?._id) {
-          toast.error("This studio could not be found.");
-          router.push("/my-listings");
-          return;
-        }
-
-        if (user && data.ownerEmail !== user.email) {
-          toast.error("You can only edit your own listings.");
-          router.push("/my-listings");
-          return;
-        }
-
-        setForm({
-          title: data.title || "",
-          category: data.category || "",
-          hourlyRate: String(data.hourlyRate || ""),
-          securityDeposit: String(data.securityDeposit || ""),
-          capacity: String(data.capacity || ""),
-          address: data.address || "",
-          description: data.description || "",
-        });
-        setImageUrls(
-          Array.isArray(data.images) && data.images.length
-            ? data.images
-            : data.imageUrl
-              ? [data.imageUrl]
-              : [""],
-        );
-        setAmenities(Array.isArray(data.amenities) ? data.amenities : []);
-      })
-      .catch(() => {
-        toast.error("This studio could not be found.");
-        router.push("/my-listings");
-      });
-  }, [studioId, user, router]);
-
   const update = (field: keyof typeof initialForm, value: string) => {
-    setForm((current) =>
-      current ? { ...current, [field]: value } : current,
-    );
+    setForm((current) => ({ ...current, [field]: value }));
   };
 
   function toggleAmenity(amenity: string) {
@@ -147,13 +121,9 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!form || !user) {
-      toast.error("You need to be signed in to manage listings.");
-      return;
-    }
-
     setIsSubmitting(true);
 
+    const token = await getTokenFromClient();
     const images = imageUrls.map((url) => url.trim()).filter(Boolean);
 
     try {
@@ -163,14 +133,15 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             ...form,
             imageUrl: images[0] ?? "",
             images,
             amenities: amenities,
-            ownerEmail: user.email,
-            ownerName: user.name,
+            ownerEmail: studio.ownerEmail,
+            ownerName: studio.ownerName,
           }),
         },
       );
@@ -195,25 +166,6 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
     }
   }
 
-  if (!form) {
-    return (
-      <div className="space-y-6" aria-busy="true" aria-live="polite">
-        {[0, 1, 2, 3].map((section) => (
-          <div
-            key={section}
-            className="rounded-2xl border border-line bg-paper p-6 sm:p-7"
-          >
-            <Skeleton className="h-6 w-44" />
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection
@@ -224,14 +176,14 @@ export function EditStudioForm({ studioId }: EditStudioFormProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Your name"
-            value={user ? user.name : ""}
+            value={studio.ownerName}
             readOnly
           />
 
           <Input
             label="Your email"
             type="email"
-            value={user ? user.email : ""}
+            value={studio.ownerEmail}
             readOnly
           />
         </div>

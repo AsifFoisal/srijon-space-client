@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Building2, PencilLine, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/hooks/use-auth";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
@@ -13,6 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonStyles } from "@/components/ui/button";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { formatCurrency } from "@/lib/utils";
 
 interface StudioListing {
@@ -37,13 +38,28 @@ function MyListingsContent() {
   useEffect(() => {
     if (!user) return;
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user?.email}`,
-    )
-      .then((response) => response.json())
-      .then((data) => setStudios(Array.isArray(data) ? data : []))
-      .catch(() => setStudios([]))
-      .finally(() => setLoading(false));
+    const load = async () => {
+      const token = await getTokenFromClient();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user.email}`,
+        {
+          cache: "no-store",
+          headers: { authorization: `Bearer ${token}` },
+        },
+      ).catch(() => null);
+      if (!response || !response.ok) {
+        setStudios([]);
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
+      setStudios(Array.isArray(data) ? data : []);
+      setLoading(false);
+    };
+
+    load();
   }, [user]);
 
   async function handleDelete() {
@@ -52,9 +68,14 @@ function MyListingsContent() {
     setDeleting(true);
 
     try {
+      const token = await getTokenFromClient();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${deleteTarget._id}`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: { authorization: `Bearer ${token}` },
+        },
       );
       const result = await response.json().catch(() => null);
 

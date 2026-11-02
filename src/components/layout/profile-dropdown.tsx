@@ -11,7 +11,7 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/hooks/use-auth";
 import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,

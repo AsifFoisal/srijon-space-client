@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { STUDIO_CATEGORIES } from "@/lib/constants";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { SmartImage } from "@/components/ui/smart-image";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,14 +18,26 @@ export function CategoriesSection() {
   useEffect(() => {
     let active = true;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (active) setStudios(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
+    const load = async () => {
+      const token = await getTokenFromClient();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/studios`,
+        {
+          cache: "no-store",
+          headers: { authorization: `Bearer ${token}` },
+        },
+      ).catch(() => null);
+      if (!response || !response.ok) {
         if (active) setStudios([]);
-      });
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
+      if (active) setStudios(Array.isArray(data) ? data : []);
+    };
+
+    load();
 
     return () => {
       active = false;

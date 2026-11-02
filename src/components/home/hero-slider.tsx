@@ -16,6 +16,7 @@ import "swiper/css/effect-fade";
 import { buttonStyles } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SmartImage } from "@/components/ui/smart-image";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { cn } from "@/lib/utils";
 
 type HeroCta =
@@ -69,14 +70,26 @@ export function HeroSlider() {
   useEffect(() => {
     let active = true;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (active) setStudioCount(Array.isArray(data) ? data.length : 0);
-      })
-      .catch(() => {
+    const load = async () => {
+      const token = await getTokenFromClient();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/studios`,
+        {
+          cache: "no-store",
+          headers: { authorization: `Bearer ${token}` },
+        },
+      ).catch(() => null);
+      if (!response || !response.ok) {
         if (active) setStudioCount(0);
-      });
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
+      if (active) setStudioCount(Array.isArray(data) ? data.length : 0);
+    };
+
+    load();
 
     return () => {
       active = false;

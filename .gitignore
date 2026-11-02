@@ -42,3 +42,10 @@ next-env.d.ts
 
 #coding agent
 .zcode
+
+#skill
+.impeccable
+
+#doc
+DESIGN.md
+PRODUCT.md

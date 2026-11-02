@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 
+import type { Studio } from "@/lib/types";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { EditStudioForm } from "@/components/dashboard/edit-studio-form";
 import { buttonStyles } from "@/components/ui/button";
 
-function EditStudioContent({ id }: { id: string }) {
+function EditStudioContent({ id, studio }: { id: string; studio: Studio }) {
   return (
     <div className="shell shell-wide pb-20 pt-28 sm:pt-32">
       <DashboardPageHeader
@@ -24,16 +25,14 @@ function EditStudioContent({ id }: { id: string }) {
         }
       />
       <div className="mt-8">
-        <EditStudioForm studioId={id} />
+        <EditStudioForm studioId={id} studio={studio} />
       </div>
     </div>
   );
 }
 
-export function EditStudioClient({ id }: { id: string }) {
-  return (
-    <RequireAuth>
-      <EditStudioContent id={id} />
-    </RequireAuth>
-  );
+export function EditStudioClient({ id, studio }: { id: string; studio: Studio }) {
+  return <RequireAuth>
+    <EditStudioContent id={id} studio={studio} />
+  </RequireAuth>;
 }

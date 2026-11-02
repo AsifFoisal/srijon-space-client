@@ -13,7 +13,7 @@ import {
 import { toast } from "sonner";
 import type { Booking, BookingStatus } from "@/lib/types";
 import { BOOKING_STATUSES } from "@/lib/constants";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/hooks/use-auth";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
@@ -33,6 +33,7 @@ import {
   formatDuration,
   formatTimeLabel,
 } from "@/lib/utils";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Tab = "All" | BookingStatus;
 const TABS: Tab[] = ["All", ...BOOKING_STATUSES];
@@ -49,10 +50,22 @@ function MyBookingsContent() {
     if (!user) return;
 
     const load = async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user?.email}`,
+      const token = await getTokenFromClient();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
+        {
+          cache: "no-store",
+          headers: { authorization: `Bearer ${token}` },
+        },
       ).catch(() => null);
-      const data = res && res.ok ? await res.json().catch(() => null) : null;
+      if (!response || !response.ok) {
+        setBookings([]);
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
       setBookings(Array.isArray(data) ? data : []);
       setLoading(false);
     };
@@ -78,12 +91,13 @@ function MyBookingsContent() {
   async function handleCancel() {
     if (!cancelTarget) return;
     setCancelling(true);
+    const token = await getTokenFromClient()
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${cancelTarget._id}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", authorization: `Bearer ${token}`},
           body: JSON.stringify({ status: "Cancelled" }),
         },
       );
