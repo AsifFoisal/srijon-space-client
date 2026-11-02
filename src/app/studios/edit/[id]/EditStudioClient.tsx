@@ -3,9 +3,9 @@
 import Link from "next/link";
 
 import type { Studio } from "@/lib/types";
-import { RequireAuth } from "@/components/auth/require-auth";
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { EditStudioForm } from "@/components/dashboard/edit-studio-form";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import { DashboardPageHeader } from "@/components/dashboard/PageHeader";
+import { EditStudioForm } from "@/components/dashboard/EditStudioForm";
 import { buttonStyles } from "@/components/ui/button";
 
 function EditStudioContent({ id, studio }: { id: string; studio: Studio }) {

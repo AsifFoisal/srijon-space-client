@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Studio } from "@/lib/types";
-import { StudioCard } from "@/components/studios/studio-card";
+import { StudioCard } from "@/components/studios/StudioCard";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
 

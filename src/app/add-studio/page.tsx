@@ -1,8 +1,8 @@
 "use client";
 
-import { RequireAuth } from "@/components/auth/require-auth";
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { StudioForm } from "@/components/dashboard/studio-form";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import { DashboardPageHeader } from "@/components/dashboard/PageHeader";
+import { StudioForm } from "@/components/dashboard/StudioForm";
 
 export default function AddStudioPage() {
   return (

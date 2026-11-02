@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { ExploreClient } from "./explore-client";
+import { ExploreClient } from "./ExploreClient";
 import type { Studio } from "@/lib/types";
 import { Skeleton, StudioGridSkeleton } from "@/components/ui/skeleton";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";

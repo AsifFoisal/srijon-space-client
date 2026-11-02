@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Logo } from "@/components/layout/logo";
-import { NewsletterForm } from "@/components/layout/newsletter-form";
+import { Logo } from "@/components/layout/Logo";
+import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 
 function XLogo({ className }: { className?: string }) {

@@ -14,8 +14,8 @@ import {
 import type { Booking, Studio } from "@/lib/types";
 import { auth } from "@/lib/auth";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { HostBookings } from "@/components/dashboard/host-bookings";
+import { DashboardPageHeader } from "@/components/dashboard/PageHeader";
+import { HostBookings } from "@/components/dashboard/HostBookings";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/badge";
 import { StatCard } from "@/components/ui/stat-card";

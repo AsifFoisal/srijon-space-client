@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { Logo } from "@/components/layout/logo";
-import { ProfileDropdown } from "@/components/layout/profile-dropdown";
+import { Logo } from "@/components/layout/Logo";
+import { ProfileDropdown } from "@/components/layout/ProfileDropdown";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

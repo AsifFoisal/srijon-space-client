@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import type { Studio } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { BookingModal } from "@/components/studios/booking-modal";
+import { BookingModal } from "@/components/studios/BookingModal";
 import { formatCurrency } from "@/lib/utils";
 
 const BookingCard = ({ studio }: { studio: Studio }) => {

@@ -16,7 +16,7 @@ import {
   SORT_OPTIONS,
   STUDIOS_PER_PAGE,
 } from "@/lib/constants";
-import { StudioCard } from "@/components/studios/studio-card";
+import { StudioCard } from "@/components/studios/StudioCard";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { buttonStyles } from "@/components/ui/button";

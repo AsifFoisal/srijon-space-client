@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Playwrite_IT_Trad, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/components/providers";
-import { SiteChrome } from "@/components/layout/site-chrome";
-import { AppPreloader } from "@/components/layout/app-preloader";
+import { Providers } from "@/components/Providers";
+import { SiteChrome } from "@/components/layout/SiteChrome";
+import { AppPreloader } from "@/components/layout/AppPreloader";
 
 const inter = Inter({
   variable: "--font-inter",

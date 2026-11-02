@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Studio } from "@/lib/types";
 import { auth } from "@/lib/auth";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
-import { EditStudioClient } from "./edit-studio-client";
+import { EditStudioClient } from "./EditStudioClient";
 
 export const metadata: Metadata = {
   title: "Edit Studio",

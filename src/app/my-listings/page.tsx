@@ -6,9 +6,9 @@ import { Building2, PencilLine, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/use-auth";
-import { RequireAuth } from "@/components/auth/require-auth";
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { ConfirmModal } from "@/components/modals/confirm-modal";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import { DashboardPageHeader } from "@/components/dashboard/PageHeader";
+import { ConfirmModal } from "@/components/modals/ConfirmModal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SmartImage } from "@/components/ui/smart-image";
 import { Skeleton } from "@/components/ui/skeleton";

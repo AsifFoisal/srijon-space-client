@@ -4,9 +4,9 @@ import { ArrowLeft, Building2, Check, MapPin, Users } from "lucide-react";
 
 import type { Review, Studio } from "@/lib/types";
 import { FALLBACK_AVATAR } from "@/lib/constants";
-import { StudioGallery } from "@/components/studios/gallery";
-import { BookingCard } from "@/components/studios/booking-card";
-import { ReviewForm } from "@/components/studios/review-form";
+import { StudioGallery } from "@/components/studios/Gallery";
+import { BookingCard } from "@/components/studios/BookingCard";
+import { ReviewForm } from "@/components/studios/ReviewForm";
 import { Avatar } from "@/components/ui/avatar";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { DetailsSkeleton } from "@/components/ui/skeleton";
