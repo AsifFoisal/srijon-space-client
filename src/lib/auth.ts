@@ -5,12 +5,16 @@ import { jwt } from "better-auth/plugins";
 
 
 const client = new MongoClient(process.env.MONGODB_URI as string);
+await client.connect();
 const db = client.db("srijonspace");
 
 export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
     database: mongodbAdapter(db, {
         client,
+        // Mongo transactions die when a serverless lambda is frozen and
+        // resumed (Vercel), surfacing as MongoTopologyClosedError.
+        transaction: false,
     }),
     emailAndPassword: {
         enabled: true,
