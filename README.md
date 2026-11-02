@@ -73,7 +73,9 @@ Email:    demo@srijonspace.com
 Password: Demo@1234
 ```
 
-This account owns all seeded studios and bookings, so the dashboard, My Studio Listings, My Bookings, and host booking management are fully populated. You can also register your own account or use **Continue with Google** — booking and reviewing work with any account.
+This is a **fresh account** — its dashboard, listings, and bookings start empty, so every private page can be tested from scratch: add a studio (with imgbb upload), book from any listing page, and watch it appear in My Bookings. The marketplace itself comes pre-seeded with 11 studios, ratings, and reviews, so exploring, searching, filtering, and studio detail pages all have content right away. You can also use **Continue with Google** instead of the credentials above.
+
+> Note: booking time slots are protected — an overlapping Pending/Confirmed booking for the same studio, date, and time is rejected with a clear error, so pick a different slot if one is taken.
 
 ## 🗺️ Routes
 
