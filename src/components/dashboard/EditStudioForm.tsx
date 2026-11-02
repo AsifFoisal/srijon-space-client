@@ -142,6 +142,7 @@ export function EditStudioForm({ studioId, studio }: EditStudioFormProps) {
             amenities: amenities,
             ownerEmail: studio.ownerEmail,
             ownerName: studio.ownerName,
+            ownerAvatar: studio.ownerAvatar ?? "",
           }),
         },
       );

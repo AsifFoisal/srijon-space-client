@@ -123,6 +123,7 @@ export function StudioForm() {
             amenities: amenities,
             ownerEmail: user ? user.email : "",
             ownerName: user ? user.name : "",
+            ownerAvatar: user ? user.avatar : "",
           }),
         },
       );

@@ -29,7 +29,7 @@ async function getStudio(id: string): Promise<Studio | null> {
   ).catch(() => null);
   if (!response || !response.ok) return null;
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
   if (!data?._id) return null;
 
   return {
@@ -53,7 +53,7 @@ async function getStudioReviews(id: string): Promise<Review[]> {
   ).catch(() => null);
   if (!response || !response.ok) return [];
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
   return (Array.isArray(data) ? data : []).map((review) => ({
     id: String(review._id),
     studioId: id,
@@ -196,7 +196,7 @@ async function StudioDetails({ id }: { id: string }) {
             </h2>
             <div className="mt-5 flex items-center gap-4 rounded-2xl border border-line bg-paper p-6">
               <Avatar
-                src={FALLBACK_AVATAR}
+                src={studio.ownerAvatar || FALLBACK_AVATAR}
                 name={studio.ownerName}
                 size={56}
               />

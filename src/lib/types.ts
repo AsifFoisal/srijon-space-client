@@ -34,6 +34,7 @@ export interface Studio {
   amenities: Amenity[];
   ownerEmail: string;
   ownerName: string;
+  ownerAvatar?: string;
   rating?: number;
   reviewCount?: number;
   createdAt?: string;
