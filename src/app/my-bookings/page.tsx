@@ -40,6 +40,7 @@ const TABS: Tab[] = ["All", ...BOOKING_STATUSES];
 
 function MyBookingsContent() {
   const { user } = useAuth();
+  const email = user?.email;
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
@@ -47,13 +48,13 @@ function MyBookingsContent() {
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!email) return;
 
     const load = async () => {
       const token = await getTokenFromClient();
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${email}`,
         {
           cache: "no-store",
           headers: { authorization: `Bearer ${token}` },
@@ -71,7 +72,10 @@ function MyBookingsContent() {
     };
 
     load();
-  }, [user]);
+    // Depend on the stable email string, not the session object — better-auth
+    // returns a fresh user object on every session refetch, which would
+    // re-trigger this effect endlessly.
+  }, [email]);
 
   if (!user) return null;
 

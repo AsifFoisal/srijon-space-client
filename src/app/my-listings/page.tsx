@@ -30,19 +30,20 @@ interface StudioListing {
 
 function MyListingsContent() {
   const { user } = useAuth();
+  const email = user?.email;
   const [studios, setStudios] = useState<StudioListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<StudioListing | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!email) return;
 
     const load = async () => {
       const token = await getTokenFromClient();
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${user.email}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/my-studios/${email}`,
         {
           cache: "no-store",
           headers: { authorization: `Bearer ${token}` },
@@ -60,7 +61,10 @@ function MyListingsContent() {
     };
 
     load();
-  }, [user]);
+    // Depend on the stable email string, not the session object — better-auth
+    // returns a fresh user object on every session refetch, which would
+    // re-trigger this effect endlessly.
+  }, [email]);
 
   async function handleDelete() {
     if (!deleteTarget) return;
