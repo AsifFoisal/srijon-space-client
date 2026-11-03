@@ -159,13 +159,13 @@ async function DashboardContent() {
             src={user.image || undefined}
             name={user.name}
             size={64}
-            className="border-2 border-white/15"
+            className="shrink-0 border-2 border-white/15"
           />
-          <div>
-            <p className="font-display text-2xl tracking-[-0.03em]">
+          <div className="min-w-0">
+            <p className="truncate font-display text-2xl tracking-[-0.03em]">
               {user.name}
             </p>
-            <p className="text-sm text-on-dark/55">{user.email}</p>
+            <p className="truncate text-sm text-on-dark/55">{user.email}</p>
             <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-on-dark/35">
               Member since{" "}
               {new Date(user.createdAt).toLocaleDateString("en-US", {
@@ -186,7 +186,7 @@ async function DashboardContent() {
       </div>
 
       <div className="mt-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Total listings"
             value={listings.length}
@@ -214,7 +214,7 @@ async function DashboardContent() {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section className="overflow-hidden rounded-2xl border border-line bg-paper">
           <header className="flex items-center justify-between border-b border-line/70 px-5 py-4">
             <h2 className="font-display text-lg tracking-[-0.02em]">
@@ -359,7 +359,7 @@ async function DashboardContent() {
         <h2 className="font-display text-lg tracking-[-0.02em]">
           Quick actions
         </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {quickActions.map((action) => (
             <Link
               key={action.href}
@@ -400,7 +400,7 @@ export default function DashboardPage() {
             <div className="mt-8">
               <StatRowSkeleton count={4} />
             </div>
-            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div className="space-y-3 rounded-2xl border border-line bg-paper p-5">
                 <Skeleton className="h-16 w-full" />
                 <Skeleton className="h-16 w-full" />

@@ -29,7 +29,12 @@ export function StudioGridSkeleton({
   className?: string;
 }) {
   return (
-    <div className={cn("grid gap-6 sm:grid-cols-2 xl:grid-cols-3", className)}>
+    <div
+      className={cn(
+        "grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3",
+        className,
+      )}
+    >
       {Array.from({ length: count }).map((_, index) => (
         <StudioCardSkeleton key={index} />
       ))}
@@ -66,7 +71,7 @@ export function DetailsSkeleton() {
 
 export function StatRowSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {Array.from({ length: count }).map((_, index) => (
         <Skeleton key={index} className="h-32 w-full rounded-2xl" />
       ))}

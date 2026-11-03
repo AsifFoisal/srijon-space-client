@@ -27,7 +27,7 @@ const CATEGORY_OPTIONS: (StudioCategory | "All Categories")[] = [
   ...CATEGORY_VALUES,
 ];
 
-const RESULTS_GRID = "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+const RESULTS_GRID = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
 
 function isCategory(value: string | null): value is StudioCategory {
   return Boolean(value && (CATEGORY_VALUES as string[]).includes(value));

@@ -125,8 +125,8 @@ async function StudioDetails({ id }: { id: string }) {
       </div>
 
       <div className="shell shell-wide">
-        <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:gap-14">
-          <div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px] lg:gap-x-14 lg:gap-y-12">
+          <div className="lg:col-start-1 lg:row-start-1">
             <span className="rounded-full bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-ivory">
               {studio.category}
             </span>
@@ -155,8 +155,14 @@ async function StudioDetails({ id }: { id: string }) {
                 <span>New listing</span>
               )}
             </div>
+          </div>
 
-            <h2 className="mt-10 font-display text-2xl tracking-[-0.03em]">
+          <aside className="self-start lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+            <BookingCard studio={studio} />
+          </aside>
+
+          <div className="lg:col-start-1 lg:row-start-2">
+            <h2 className="font-display text-2xl tracking-[-0.03em]">
               About this space
             </h2>
             <p className="mt-4 whitespace-pre-line text-[15px] leading-8 text-stone">
@@ -168,7 +174,10 @@ async function StudioDetails({ id }: { id: string }) {
             </h2>
             <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
               {specs.map((spec) => (
-                <div key={spec.label} className="bg-paper p-4">
+                <div
+                  key={spec.label}
+                  className="bg-paper p-4 last:col-span-2 sm:last:col-span-1"
+                >
                   <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone">
                     {spec.label}
                   </p>
@@ -272,10 +281,6 @@ async function StudioDetails({ id }: { id: string }) {
               </div>
             )}
           </div>
-
-          <aside className="self-start lg:sticky lg:top-24">
-            <BookingCard studio={studio} />
-          </aside>
         </div>
       </div>
     </main>

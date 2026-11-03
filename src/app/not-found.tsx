@@ -12,7 +12,7 @@ export default function NotFound() {
   return (
     <div className="pb-20 pt-28 sm:pt-32">
       <div className="shell shell-wide">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
           <div>
             <p className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.26em] text-stone">
               <Aperture className="size-4 text-accent" aria-hidden="true" />
@@ -68,7 +68,7 @@ export default function NotFound() {
 
         <div className="mt-16 border-t border-line pt-8">
           <p className="kicker">Or start from a category</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {suggestions.map((category) => (
               <Link
                 key={category.value}

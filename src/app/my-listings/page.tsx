@@ -119,7 +119,7 @@ function MyListingsContent() {
 
       <div className="mt-8">
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {[0, 1, 2].map((item) => (
               <div
                 key={item}
@@ -146,7 +146,7 @@ function MyListingsContent() {
             </Link>
           </EmptyState>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {studios.map((studio) => (
               <article
                 key={studio._id}

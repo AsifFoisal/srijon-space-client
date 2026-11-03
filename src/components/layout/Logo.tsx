@@ -36,7 +36,7 @@ export function Logo({
       </span>
       <span
         className={cn(
-          "text-[20px] font-normal leading-none",
+          "whitespace-nowrap text-[20px] font-normal leading-none",
           light ? "text-on-dark" : "text-ink",
         )}
         style={{ fontFamily: "var(--font-playwrite)" }}

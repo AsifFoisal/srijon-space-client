@@ -152,7 +152,9 @@ export function Navbar() {
                 <Skeleton className="h-10 w-28 rounded-full" />
               </div>
             ) : user ? (
-              <ProfileDropdown light={onDark} />
+              <div className="hidden sm:block">
+                <ProfileDropdown light={onDark} />
+              </div>
             ) : (
               <div className="hidden items-center gap-2 sm:flex">
                 <Link

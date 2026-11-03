@@ -61,7 +61,7 @@ export function CategoriesSection() {
           description="Whatever your craft, there's a space designed for it."
         />
 
-        <div className="mt-11 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
+        <div className="no-scrollbar mt-11 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
           {STUDIO_CATEGORIES.map((category, index) => {
             const count = countFor(category.value);
 
